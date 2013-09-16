@@ -30,7 +30,7 @@
 }
 
 .datagrid th, .pointer {
-    cursor: pointer;
+    cursor: pointer !important;
 }
 
 .datagrid th {

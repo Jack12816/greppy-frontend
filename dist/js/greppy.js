@@ -594,21 +594,21 @@ greppy.Paginator.prototype.getParameters = function(page)
  * @constructor
  */
 greppy.Styler = function()
-{ 
+{
 };
 
 /**
  * Styles a fileupload input in the manner of bootstrap 3.
- * 
+ *
  * @param {String|Object} elem Maybe a String or a jQuery object
  * @returns {undefined}
  */
 greppy.Styler.prototype.styleUpload = function(elem)
 {
     elem = this.validateStyleUpload(elem);
-    
+
     var newUploadSel = 'div[data-fileuploadname="' + elem.name + '"]';
-    
+
     var markup = '<div class="input-group" data-fileuploadname="' + elem.name + '">' +
         '<span class="input-group-addon"><i class="icon-file"></i></span>' +
         '<div class="form-control"><span class="file-path"></span></div>' +
@@ -616,25 +616,26 @@ greppy.Styler.prototype.styleUpload = function(elem)
                     '<button id="myBtn" class="btn btn-default">Datei wählen</button>' +
                 '</span>' +
         '</div>';
-    
+
     elem.after(markup);
-    
+
     elem.on('change', function() {
         $(newUploadSel + ' .file-path').text($(this).val().split('\\').pop());
     });
-    
-    $(newUploadSel + ' button').on('click', function() {
-        
+
+    $(newUploadSel + ' button, ' + newUploadSel + ' .form-control').on('click', function() {
+
         elem.trigger('click');
-        
+
         return false;
     });
-    
+
+    elem.hide();
 };
 
 /**
  * Helper function that validates an input-files element.
- * 
+ *
  * @param {String|Object} elem A fileupload element or a selector that's pointing to one.
  * @returns {Object} jQuery object
  */
@@ -642,23 +643,23 @@ greppy.Styler.prototype.validateStyleUpload = function (elem)
 {
     var s = new greppy.Sanitizer();
     var name;
-    
+
     elem = s.toJquery(elem);
-    
+
     s.assertSingle(elem);
-    
+
     name = elem.attr('name');
-    
+
     if (!name || $('*[name="' + name + '"]').length > 1) {
         throw new Error('Element needs to have a unique name!');
     }
-    
+
     return elem;
 };
 
 /**
  * Class for sanitizing input of all kinds.
- * 
+ *
  * @constructor
  */
 greppy.Sanitizer = function()
@@ -673,11 +674,11 @@ greppy.Sanitizer = function()
 greppy.Sanitizer.prototype.toJquery = function(elem)
 {
     elem = ('string' == typeof elem) ? $(elem) : elem;
-    
+
     if ('undefined' === typeof elem || elem.length === 0) {
         throw new Error('No element(s) found!');
     }
-    
+
     return elem;
 };
 

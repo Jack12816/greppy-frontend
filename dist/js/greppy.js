@@ -7,7 +7,7 @@ var greppy = {};
 
 greppy.Application = function()
 {
-}
+};
 
 /**
  * Start a bootstrap modal easily.
@@ -88,7 +88,7 @@ greppy.Application.prototype.dialog = function(body, options, buttons)
     modal.on('shown.bs.modal', function() {
         modal.find('input:first').focus();
     });
-}
+};
 
 /**
  * @constructor
@@ -100,7 +100,7 @@ greppy.Controller = function(options)
     Object.keys(options).forEach(function(key) {
         self[key] = options[key];
     });
-}
+};
 
 /**
  * Build a link to an action.
@@ -128,13 +128,15 @@ greppy.Controller.prototype.link = function(action, params)
     }
 
     return link;
-}
+};
 
 /**
  * @constructor
  */
 greppy.DataGrid = function(table, options)
 {
+    var s = new greppy.Styler();
+    
     this.table    = table;
     this.search   = new greppy.Search(this, table);
     this.sort     = new greppy.Sort(this, table);
@@ -144,22 +146,22 @@ greppy.DataGrid = function(table, options)
     this.options.softDeletion = ('undefined' !== typeof options.softDeletion) ?
                                     options.softDeletion : true;
 
-    this.initOverlay();
+    s.initOverlay(this.table, 'loading.datagrid.g', 'rebuilt.datagrid.g');
 
     // Wrap twitter bs events to prevent race conditions
     $('.btn').on({
         change : function(e) {
             setTimeout(function() {
-                $(e.currentTarget).trigger('g.change');
+                $(e.currentTarget).trigger('change.g');
             }, 20);
         }
     });
-}
+};
 
 /**
  * Build URL with given params.
  *
- * @params {Array} params - Parameters to add to the request
+ * @param {Array} params - Parameters to add to the request
  * @return void
  */
 greppy.DataGrid.prototype.buildUrl = function(params)
@@ -188,7 +190,7 @@ greppy.DataGrid.prototype.buildUrl = function(params)
     });
 
     return url;
-}
+};
 
 /**
  * Perform an AJAX request to load table rows
@@ -210,11 +212,11 @@ greppy.DataGrid.prototype.loadAndRebuild = function(params)
     }).done(function(data) {
             self.table.find('tr').not(':first').remove();
             self.table.find('tbody').append(data);
-            self.table.trigger('g.datagrid.rebuilt');
+            self.table.trigger('rebuilt.datagrid.g');
     });
 
-    this.table.trigger('g.datagrid.loading');
-}
+    this.table.trigger('loading.datagrid.g');
+};
 
 /**
  * Reset all filters.
@@ -225,7 +227,7 @@ greppy.DataGrid.prototype.reset = function()
 {
     this.loadAndRebuild(this.paginate.getParameters());
     this.paginate.load(1);
-}
+};
 
 /**
  * Load by all settings.
@@ -241,56 +243,6 @@ greppy.DataGrid.prototype.load = function()
     params = params.concat(this.paginate.getParameters());
 
     this.loadAndRebuild(params);
-}
-
-/**
- * Initializes the overlay for page changes of DataGrids.
- *
- * @returns {undefined}
- */
-greppy.DataGrid.prototype.initOverlay = function() {
-    var self      = this;
-    var overlayId = 'gOverlay';
-
-    this.table.on({
-        'g.datagrid.loading': function() {
-            self.table.find('#' + overlayId).remove();
-
-            self.table.after('<div id="' + overlayId + '" />');
-
-            $('#' + overlayId).css({
-                background : '#fff',
-                opacity    : '0.6',
-                position   : 'absolute',
-                top        : self.table.position().top,
-                left       : self.table.position().left,
-                width      : self.table.outerWidth(),
-                height     : self.table.outerHeight()
-            });
-
-            self.initSpinner(document.getElementById(overlayId));
-        },
-        'g.datagrid.rebuilt': function() {
-            $('#' + overlayId).remove();
-        }
-    });
-};
-
-/**
- * Initializes the spinner animation for a given target.
- *
- * @param {obj} non-jQuery object where the spinner is placed
- * @returns {undefined}
- */
-greppy.DataGrid.prototype.initSpinner = function(target) {
-    var opts = {
-        lines  : 12,
-        length : 20,
-        width  : 5,
-        radius : 20
-    };
-
-    this.spinner = new Spinner(opts).spin(target);
 };
 
 /**
@@ -315,7 +267,7 @@ greppy.Search = function(datagrid, datagridElement)
     // Bind events
 
     // Search or trash button clicked
-    $('#search-trash').on('g.change', function() {
+    $('#search-trash').on('change.g', function() {
         self.datagrid.paginate.page = 1;
         self.datagrid.load();
     });
@@ -345,7 +297,7 @@ greppy.Search = function(datagrid, datagridElement)
             $('#search-btn').trigger('click');
         }
     });
-}
+};
 
 /**
  * Apply the search box settings.
@@ -364,7 +316,7 @@ greppy.Search.prototype.settings = function(property, placeholder)
 
     this.input.attr('placeholder', placeholder + '..')
               .attr('data-property', property);
-}
+};
 
 /**
  * Clear the search box.
@@ -374,7 +326,7 @@ greppy.Search.prototype.settings = function(property, placeholder)
 greppy.Search.prototype.clear = function()
 {
     this.input.val('');
-}
+};
 
 /**
  * Get all relevant parameters.
@@ -395,7 +347,7 @@ greppy.Search.prototype.getParameters = function()
     ]);
 
     return params;
-}
+};
 
 /**
  * @constructor
@@ -412,12 +364,12 @@ greppy.Sort = function(datagrid, datagridElement)
     this.datagridElement.find($('th[data-property] span')).on('click', function() {
         self.toggle($(this).parent());
     });
-}
+};
 
 /**
  * Toggle the sorting of a column.
  *
- * @params {Object} th - Table header to toggle
+ * @param {Object} th - Table header to toggle
  * @return void
  */
 greppy.Sort.prototype.toggle = function(th)
@@ -450,7 +402,7 @@ greppy.Sort.prototype.toggle = function(th)
     }
 
     this.datagrid.load();
-}
+};
 
 /**
  * Get all relevant parameters.
@@ -469,7 +421,7 @@ greppy.Sort.prototype.getParameters = function()
         {name: 'order', value: th.attr('data-sort')},
         {name: 'oprop', value: th.attr('data-property')}
     ]
-}
+};
 
 /*
  * @constructor
@@ -550,7 +502,7 @@ greppy.Paginator = function(datagrid, datagridElement)
             );
         }
     });
-}
+};
 
 /**
  * Load the pagination partial.
@@ -574,7 +526,7 @@ greppy.Paginator.prototype.load = function(page)
     }).done(function(data) {
         $('.paginator').html(data);
     });
-}
+};
 
 /**
  * Get all relevant parameters.
@@ -587,8 +539,8 @@ greppy.Paginator.prototype.getParameters = function(page)
     return [
         {name: 'page', value: page || this.page},
         {name: 'limit', value: $('#pagination-limit :selected').val()}
-    ]
-}
+    ];
+};
 
 /**
  * @constructor
@@ -658,6 +610,77 @@ greppy.Styler.prototype.validateStyleUpload = function (elem)
 };
 
 /**
+ * Creates an overlay which is displayed on top of an element, when a specified
+ * event occurs.
+ * 
+ * @param {String|Object} el Maybe a String or a jQuery object.
+ * @param {String} showEvent Name of the event which is showing the overlay when fired.
+ * @param {String} removeEvent Name of the event which is removing the overlay when fired.
+ * @returns {undefined}
+ */
+greppy.Styler.prototype.initOverlay = function(el, showEvent, removeEvent)
+{
+    var s = new greppy.Sanitizer();
+    var self      = this;
+    var overlayId = 'gOverlay' + (new Date).getTime();
+    var evts = {};
+
+    el = s.toJquery(el);
+    s.assertSingle(el);
+
+    evts[showEvent] = function() {
+        el.parent().find('#' + overlayId).remove();
+
+        el.after('<div id="' + overlayId + '" />');
+
+        $('#' + overlayId).css({
+            background : 'rgba(255, 255, 255, 0.6)',
+            position   : 'absolute',
+            top        : el.position().top,
+            left       : el.position().left,
+            width      : el.outerWidth(),
+            height     : el.outerHeight()
+        });
+
+        self.initSpinner(document.getElementById(overlayId));
+    };
+
+    evts[removeEvent] = function() {
+        $('#' + overlayId).remove();
+    };
+
+    el.on(evts);
+};
+
+/**
+ * Initializes the spinner animation for a given target.
+ *
+ * @param {Object} target Non-jQuery object where the spinner is placed
+ * @param {Object} opts The options for the spinner. Optional.
+ * @returns {undefined}
+ */
+greppy.Styler.prototype.initSpinner = function(target, opts) {
+    opts = opts || {
+        lines: 11, // The number of lines to draw
+        length: 0, // The length of each line
+        width: 10, // The line thickness
+        radius: 30, // The radius of the inner circle
+        corners: 1, // Corner roundness (0..1)
+        rotate: 0, // The rotation offset
+        direction: 1, // 1: clockwise, -1: counterclockwise
+        color: '#000', // #rgb or #rrggbb
+        speed: 1, // Rounds per second
+        trail: 29, // Afterglow percentage
+        shadow: false, // Whether to render a shadow
+        hwaccel: true, // Whether to use hardware acceleration
+        className: 'spinner', // The CSS class to assign to the spinner
+        zIndex: 2e9, // The z-index (defaults to 2000000000)
+    };
+
+    this.spinner = new Spinner(opts).spin(target);
+};
+
+/**
  * Class for sanitizing input of all kinds.
  *
  * @constructor
@@ -673,7 +696,7 @@ greppy.Sanitizer = function()
  */
 greppy.Sanitizer.prototype.toJquery = function(elem)
 {
-    elem = ('string' == typeof elem) ? $(elem) : elem;
+    elem = ('string' === typeof elem) ? $(elem) : elem;
 
     if ('undefined' === typeof elem || elem.length === 0) {
         throw new Error('No element(s) found!');

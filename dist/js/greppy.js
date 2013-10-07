@@ -136,7 +136,7 @@ greppy.Controller.prototype.link = function(action, params)
 greppy.DataGrid = function(table, options)
 {
     var s = new greppy.Styler();
-    
+
     this.table    = table;
     this.search   = new greppy.Search(this, table);
     this.sort     = new greppy.Sort(this, table);
@@ -267,15 +267,20 @@ greppy.Search = function(datagrid, datagridElement)
     // Bind events
 
     // Search or trash button clicked
-    $('#search-trash').on('change.g', function() {
+    $('#search-trash').on('change.g', function(e) {
+
+        if ('g' !== e.namespace) {
+            return false;
+        }
+
         self.datagrid.paginate.page = 1;
         self.datagrid.load();
     });
 
     $('#search-btn').on('click', function() {
         self.datagrid.paginate.page = 1;
-        self.datagrid.load();}
-    );
+        self.datagrid.load();
+    });
 
     // Search selector clicked
     $('.search-trigger').on('click', function() {
@@ -440,7 +445,6 @@ greppy.Paginator = function(datagrid, datagridElement)
     doc.on('click', '.pagination a[data-page]', function() {
         self.page = $(this).attr('data-page');
         self.datagrid.load();
-        self.load();
     });
 
     // Page limit changed
@@ -612,7 +616,7 @@ greppy.Styler.prototype.validateStyleUpload = function (elem)
 /**
  * Creates an overlay which is displayed on top of an element, when a specified
  * event occurs.
- * 
+ *
  * @param {String|Object} el Maybe a String or a jQuery object.
  * @param {String} showEvent Name of the event which is showing the overlay when fired.
  * @param {String} removeEvent Name of the event which is removing the overlay when fired.

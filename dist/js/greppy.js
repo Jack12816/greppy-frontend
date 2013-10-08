@@ -175,7 +175,7 @@ greppy.DataGrid.prototype.buildUrl = function(params)
 
     if (this.options.softDeletion) {
 
-        if (true == $('#search-trash label').hasClass('active')) {
+        if (true === $('#search-trash label').hasClass('active')) {
 
             params.unshift({
                 name: 'filter',
@@ -201,24 +201,37 @@ greppy.DataGrid.prototype.buildUrl = function(params)
  *
  * @return void
  */
-greppy.DataGrid.prototype.loadAndRebuild = function(params)
+greppy.DataGrid.prototype.loadAndRebuild = function(params, callback)
 {
+    this.table.trigger('loading.datagrid.g');
+
     var self = this;
     params   = params || [];
-    params.unshift({name: 'render', value: 'rows'});
 
-    this.paginate.load();
+    var load = function(url) {
 
-    $.ajax({
-        type : "GET",
-        url  : this.buildUrl(params)
-    }).done(function(data) {
-            self.table.find('tr').not(':first').remove();
-            self.table.find('tbody').append(data);
-            self.table.trigger('rebuilt.datagrid.g');
-    });
+        $.ajax({
+            type : "GET",
+            url  : url
+        }).done(callback);
+    }
 
-    this.table.trigger('loading.datagrid.g');
+    var url = this.buildUrl(params);
+
+    if ('function' === typeof this.options.preLoad) {
+
+        this.options.preLoad(url, function(err, url) {
+
+            if (err) {
+                return;
+            }
+
+            load(url);
+        });
+
+    } else {
+        load(url);
+    }
 };
 
 /**
@@ -228,8 +241,7 @@ greppy.DataGrid.prototype.loadAndRebuild = function(params)
  */
 greppy.DataGrid.prototype.reset = function()
 {
-    this.loadAndRebuild(this.paginate.getParameters());
-    this.paginate.load(1);
+    this.load(true, true, 1);
 };
 
 /**
@@ -237,15 +249,44 @@ greppy.DataGrid.prototype.reset = function()
  *
  * @return void
  */
-greppy.DataGrid.prototype.load = function()
+greppy.DataGrid.prototype.load = function(rows, pagination, page)
 {
+    var self   = this;
     var params = [];
+
+    if ('undefined' === typeof rows) {
+        rows = true;
+    }
+
+    if ('undefined' === typeof pagination) {
+        pagination = true;
+    }
 
     params = params.concat(this.search.getParameters());
     params = params.concat(this.sort.getParameters());
-    params = params.concat(this.paginate.getParameters());
+    params = params.concat(this.paginate.getParameters(page));
 
-    this.loadAndRebuild(params);
+    if (true === rows) {
+
+        var rowParams = [].concat(params);
+        rowParams.unshift({name: 'render', value: 'rows'});
+
+        this.loadAndRebuild(rowParams, function(data) {
+            self.table.find('tr').not(':first').remove();
+            self.table.find('tbody').append(data);
+            self.table.trigger('rebuilt.datagrid.g');
+        });
+    }
+
+    if (true === pagination) {
+
+        var paginationParams = [].concat(params);
+        paginationParams.unshift({name: 'render', value: 'pagination'});
+
+        this.loadAndRebuild(paginationParams, function(data) {
+            $('.paginator').html(data);
+        });
+    }
 };
 
 /*
@@ -269,8 +310,7 @@ greppy.Paginator = function(datagrid, datagridElement)
 
     // Page limit changed
     doc.on('change', '#pagination-limit', function() {
-        self.page = 1;
-        self.datagrid.load();
+        self.datagrid.reset();
     });
 
     // Keyboard usage events
@@ -285,7 +325,6 @@ greppy.Paginator = function(datagrid, datagridElement)
         if (37 == e.keyCode) {
             self.page = (self.page > 0) ? self.page-1 : 1;
             self.datagrid.load();
-            self.load();
         }
 
         // Right arrow pressed
@@ -300,7 +339,6 @@ greppy.Paginator = function(datagrid, datagridElement)
 
             self.page = (self.page < maxPage) ? self.page+1 : self.page;
             self.datagrid.load();
-            self.load();
         }
 
         // Quick jump to page event (g)
@@ -319,37 +357,12 @@ greppy.Paginator = function(datagrid, datagridElement)
 
                         self.page = parseInt($('#page-to-jump').val());
                         self.datagrid.load();
-                        self.load();
 
                         callback && callback();
                     }
                 }
             );
         }
-    });
-};
-
-/**
- * Load the pagination partial.
- *
- * @param {Integer} [page] - Page number to load
- * @return void
- */
-greppy.Paginator.prototype.load = function(page)
-{
-    var params = [];
-
-    params = params.concat(this.datagrid.search.getParameters());
-    params = params.concat(this.datagrid.sort.getParameters());
-    params = params.concat(this.datagrid.paginate.getParameters(page));
-
-    params.unshift({name: 'render', value: 'pagination'});
-
-    $.ajax({
-        type : "GET",
-        url  : this.datagrid.buildUrl(params)
-    }).done(function(data) {
-        $('.paginator').html(data);
     });
 };
 

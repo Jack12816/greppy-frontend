@@ -19,8 +19,7 @@ greppy.Paginator = function(datagrid, datagridElement)
 
     // Page limit changed
     doc.on('change', '#pagination-limit', function() {
-        self.page = 1;
-        self.datagrid.load();
+        self.datagrid.reset();
     });
 
     // Keyboard usage events
@@ -35,7 +34,6 @@ greppy.Paginator = function(datagrid, datagridElement)
         if (37 == e.keyCode) {
             self.page = (self.page > 0) ? self.page-1 : 1;
             self.datagrid.load();
-            self.load();
         }
 
         // Right arrow pressed
@@ -50,7 +48,6 @@ greppy.Paginator = function(datagrid, datagridElement)
 
             self.page = (self.page < maxPage) ? self.page+1 : self.page;
             self.datagrid.load();
-            self.load();
         }
 
         // Quick jump to page event (g)
@@ -69,37 +66,12 @@ greppy.Paginator = function(datagrid, datagridElement)
 
                         self.page = parseInt($('#page-to-jump').val());
                         self.datagrid.load();
-                        self.load();
 
                         callback && callback();
                     }
                 }
             );
         }
-    });
-};
-
-/**
- * Load the pagination partial.
- *
- * @param {Integer} [page] - Page number to load
- * @return void
- */
-greppy.Paginator.prototype.load = function(page)
-{
-    var params = [];
-
-    params = params.concat(this.datagrid.search.getParameters());
-    params = params.concat(this.datagrid.sort.getParameters());
-    params = params.concat(this.datagrid.paginate.getParameters(page));
-
-    params.unshift({name: 'render', value: 'pagination'});
-
-    $.ajax({
-        type : "GET",
-        url  : this.datagrid.buildUrl(params)
-    }).done(function(data) {
-        $('.paginator').html(data);
     });
 };
 

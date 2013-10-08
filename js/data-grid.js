@@ -40,7 +40,7 @@ greppy.DataGrid.prototype.buildUrl = function(params)
 
     if (this.options.softDeletion) {
 
-        if (true == $('#search-trash label').hasClass('active')) {
+        if (true === $('#search-trash label').hasClass('active')) {
 
             params.unshift({
                 name: 'filter',
@@ -66,24 +66,37 @@ greppy.DataGrid.prototype.buildUrl = function(params)
  *
  * @return void
  */
-greppy.DataGrid.prototype.loadAndRebuild = function(params)
+greppy.DataGrid.prototype.loadAndRebuild = function(params, callback)
 {
+    this.table.trigger('loading.datagrid.g');
+
     var self = this;
     params   = params || [];
-    params.unshift({name: 'render', value: 'rows'});
 
-    this.paginate.load();
+    var load = function(url) {
 
-    $.ajax({
-        type : "GET",
-        url  : this.buildUrl(params)
-    }).done(function(data) {
-            self.table.find('tr').not(':first').remove();
-            self.table.find('tbody').append(data);
-            self.table.trigger('rebuilt.datagrid.g');
-    });
+        $.ajax({
+            type : "GET",
+            url  : url
+        }).done(callback);
+    }
 
-    this.table.trigger('loading.datagrid.g');
+    var url = this.buildUrl(params);
+
+    if ('function' === typeof this.options.preLoad) {
+
+        this.options.preLoad(url, function(err, url) {
+
+            if (err) {
+                return;
+            }
+
+            load(url);
+        });
+
+    } else {
+        load(url);
+    }
 };
 
 /**
@@ -93,8 +106,7 @@ greppy.DataGrid.prototype.loadAndRebuild = function(params)
  */
 greppy.DataGrid.prototype.reset = function()
 {
-    this.loadAndRebuild(this.paginate.getParameters());
-    this.paginate.load(1);
+    this.load(true, true, 1);
 };
 
 /**
@@ -102,14 +114,43 @@ greppy.DataGrid.prototype.reset = function()
  *
  * @return void
  */
-greppy.DataGrid.prototype.load = function()
+greppy.DataGrid.prototype.load = function(rows, pagination, page)
 {
+    var self   = this;
     var params = [];
+
+    if ('undefined' === typeof rows) {
+        rows = true;
+    }
+
+    if ('undefined' === typeof pagination) {
+        pagination = true;
+    }
 
     params = params.concat(this.search.getParameters());
     params = params.concat(this.sort.getParameters());
-    params = params.concat(this.paginate.getParameters());
+    params = params.concat(this.paginate.getParameters(page));
 
-    this.loadAndRebuild(params);
+    if (true === rows) {
+
+        var rowParams = [].concat(params);
+        rowParams.unshift({name: 'render', value: 'rows'});
+
+        this.loadAndRebuild(rowParams, function(data) {
+            self.table.find('tr').not(':first').remove();
+            self.table.find('tbody').append(data);
+            self.table.trigger('rebuilt.datagrid.g');
+        });
+    }
+
+    if (true === pagination) {
+
+        var paginationParams = [].concat(params);
+        paginationParams.unshift({name: 'render', value: 'pagination'});
+
+        this.loadAndRebuild(paginationParams, function(data) {
+            $('.paginator').html(data);
+        });
+    }
 };
 

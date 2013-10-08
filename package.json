@@ -1,7 +1,7 @@
 {
     "name": "greppy-frontend",
     "description": "Frontend library for the easy and lightweight application framework",
-    "version": "0.1.2",
+    "version": "0.2.0",
     "private": false,
     "author": "Hermann Mayer <hermann.mayer92@googlemail.com> (http://hermann-mayer.net/)",
     "license": "LGPL-3.0",
@@ -31,7 +31,7 @@
     ],
     "devDependencies": {
         "uglify-js": "~2.4.0",
-        "clean-css": "~1.1.1"
+        "less": "~1.4.2"
     },
     "repository": {
         "type": "git",

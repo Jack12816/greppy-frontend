@@ -149,13 +149,13 @@ greppy.DataGrid = function(table, options)
     this.options.softDeletion = ('undefined' !== typeof options.softDeletion) ?
                                     options.softDeletion : true;
 
-    s.initOverlay(this.table, 'loading.datagrid.g', 'rebuilt.datagrid.g');
+    s.initOverlay(this.table, 'gDatagridLoading', 'gDatagridRebuilt');
 
     // Wrap twitter bs events to prevent race conditions
     $('.btn').on({
         change : function(e) {
             setTimeout(function() {
-                $(e.currentTarget).trigger('change.g');
+                $(e.currentTarget).trigger('gChange');
             }, 20);
         }
     });
@@ -203,7 +203,7 @@ greppy.DataGrid.prototype.buildUrl = function(params)
  */
 greppy.DataGrid.prototype.loadAndRebuild = function(params, callback)
 {
-    this.table.trigger('loading.datagrid.g');
+    this.table.trigger('gDatagridLoading');
 
     var self = this;
     params   = params || [];
@@ -274,7 +274,7 @@ greppy.DataGrid.prototype.load = function(rows, pagination, page)
         this.loadAndRebuild(rowParams, function(data) {
             self.table.find('tr').not(':first').remove();
             self.table.find('tbody').append(data);
-            self.table.trigger('rebuilt.datagrid.g');
+            self.table.trigger('gDatagridRebuilt');
         });
     }
 
@@ -402,11 +402,7 @@ greppy.Search = function(datagrid, datagridElement)
     // Bind events
 
     // Search or trash button clicked
-    $('#search-trash').on('change.g', function(e) {
-
-        if ('g' !== e.namespace) {
-            return false;
-        }
+    $('#search-trash').on('gChange', function(e) {
 
         self.datagrid.paginate.page = 1;
         self.datagrid.load();

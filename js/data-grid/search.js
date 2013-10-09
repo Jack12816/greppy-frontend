@@ -20,11 +20,7 @@ greppy.Search = function(datagrid, datagridElement)
     // Bind events
 
     // Search or trash button clicked
-    $('#search-trash').on('change.g', function(e) {
-
-        if ('g' !== e.namespace) {
-            return false;
-        }
+    $('#search-trash').on('gChange', function(e) {
 
         self.datagrid.paginate.page = 1;
         self.datagrid.load();

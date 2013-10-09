@@ -39,3 +39,9 @@
 .medium-left-margin {
   margin-left: 10px;
 }
+.greppy-container-num .btn {
+  margin-left: -1px;
+}
+.greppy-container-num .btn + .btn {
+  margin-left: -5px;
+}

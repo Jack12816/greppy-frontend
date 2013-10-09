@@ -644,12 +644,12 @@ greppy.Styler.prototype.styleUpload = function(elem)
 };
 
 /**
- * Helper function that validates an input-files element.
+ * Helper function that validates an input[type="files"] element.
  *
  * @param {String|Object} elem A fileupload element or a selector that's pointing to one.
  * @returns {Object} jQuery object
  */
-greppy.Styler.prototype.validateStyleUpload = function (elem)
+greppy.Styler.prototype.validateStyleUpload = function(elem)
 {
     var s = new greppy.Sanitizer();
     var name;
@@ -666,6 +666,62 @@ greppy.Styler.prototype.validateStyleUpload = function (elem)
 
     return elem;
 };
+
+/**
+ * Styles an input element to be adjustable via buttons.
+ *
+ * @param {String|Object} elem Maybe a String or a jQuery object
+ * @returns {undefined}
+ */
+greppy.Styler.prototype.styleNumber = function(elem)
+{
+    elem = this.validateStyleNumber(elem);
+
+    elem.wrap('<div class="input-group greppy-container-num"></div>');
+
+    elem.addClass('pull-left');
+
+    elem.after('<div class="input-group-btn pull-left">' +
+            '<button class="btn btn-default g-add" type="button">' +
+                '<i class="icon-plus"></i>' +
+            '</button>&nbsp;' +
+            '<button class="btn btn-default g-substract" type="button">' +
+                '<i class="icon-minus"></i>' +
+            '</button>' +
+    '</div>');
+
+    elem.next('.input-group-btn').find('.g-add').on('click', function() {
+        var val = (isNaN(parseInt(elem.val(), 10))) ? 0 : parseInt(elem.val(), 10);
+        val     = (elem.attr('data-max') < (val + 1)) ? val : val + 1;
+        elem.val(val);
+    });
+
+    elem.next('.input-group-btn').find('.g-substract').on('click', function() {
+        var val = (isNaN(parseInt(elem.val(), 10))) ? 0 : parseInt(elem.val(), 10);
+        val     = (elem.attr('data-min') > (val - 1)) ? val : val - 1;
+        elem.val(val);
+    });
+};
+
+/**
+ * Helper function, which does the validation for styleNumber.
+ *
+ * @param {String|Object} elem Maybe a String or a jQuery object
+ * @returns {Object} jQuery object
+ */
+greppy.Styler.prototype.validateStyleNumber = function(elem)
+{
+    var s = new greppy.Sanitizer();
+
+    elem = s.toJquery(elem);
+
+    if ('INPUT' !== elem.prop('tagName')) {
+        throw new Error('Element needs to be an input!');
+    }
+
+    return elem;
+};
+
 
 /**
  * Creates an overlay which is displayed on top of an element, when a specified

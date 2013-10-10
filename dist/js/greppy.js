@@ -241,7 +241,25 @@ greppy.DataGrid.prototype.loadAndRebuild = function(params, callback)
  */
 greppy.DataGrid.prototype.reset = function()
 {
-    this.load(true, true, 1);
+    var reset = function()
+    {
+        this.load(true, true, 1);
+    }
+
+    if ('function' === typeof this.options.preReset) {
+
+        this.options.preReset(url, function(err) {
+
+            if (err) {
+                return;
+            }
+
+            reset();
+        });
+
+    } else {
+        load();
+    }
 };
 
 /**
@@ -262,6 +280,10 @@ greppy.DataGrid.prototype.load = function(rows, pagination, page)
         pagination = true;
     }
 
+    if (rows || pagination) {
+        self.table.trigger('gDatagridRebuilt');
+    }
+
     params = params.concat(this.search.getParameters());
     params = params.concat(this.sort.getParameters());
     params = params.concat(this.paginate.getParameters(page));
@@ -274,7 +296,6 @@ greppy.DataGrid.prototype.load = function(rows, pagination, page)
         this.loadAndRebuild(rowParams, function(data) {
             self.table.find('tr').not(':first').remove();
             self.table.find('tbody').append(data);
-            self.table.trigger('gDatagridRebuilt');
         });
     }
 

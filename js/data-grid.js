@@ -106,14 +106,16 @@ greppy.DataGrid.prototype.loadAndRebuild = function(params, callback)
  */
 greppy.DataGrid.prototype.reset = function()
 {
+    var self = this;
+
     var reset = function()
     {
-        this.load(true, true, 1);
+        self.load(true, true, 1);
     }
 
     if ('function' === typeof this.options.preReset) {
 
-        this.options.preReset(url, function(err) {
+        this.options.preReset(function(err) {
 
             if (err) {
                 return;

@@ -280,10 +280,6 @@ greppy.DataGrid.prototype.load = function(rows, pagination, page)
         pagination = true;
     }
 
-    if (rows || pagination) {
-        self.table.trigger('gDatagridRebuilt');
-    }
-
     params = params.concat(this.search.getParameters());
     params = params.concat(this.sort.getParameters());
     params = params.concat(this.paginate.getParameters(page));
@@ -296,6 +292,7 @@ greppy.DataGrid.prototype.load = function(rows, pagination, page)
         this.loadAndRebuild(rowParams, function(data) {
             self.table.find('tr').not(':first').remove();
             self.table.find('tbody').append(data);
+            self.table.trigger('gDatagridRebuilt');
         });
     }
 

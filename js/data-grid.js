@@ -1,5 +1,8 @@
 /**
  * @constructor
+ *
+ * @param {Object} table - jQuery object of the table to  use for the DataGrid
+ * @param {Object} [options] - Options to use for the DataGrid
  */
 greppy.DataGrid = function(table, options)
 {
@@ -9,7 +12,7 @@ greppy.DataGrid = function(table, options)
     this.search   = new greppy.Search(this, table);
     this.sort     = new greppy.Sort(this, table);
     this.paginate = new greppy.Paginator(this, table);
-    this.options  = options;
+    this.options  = options || {};
 
     this.options.softDeletion = ('undefined' !== typeof options.softDeletion) ?
                                     options.softDeletion : true;
@@ -30,7 +33,7 @@ greppy.DataGrid = function(table, options)
  * Build URL with given params.
  *
  * @param {Array} params - Parameters to add to the request
- * @return void
+ * @return {String}
  */
 greppy.DataGrid.prototype.buildUrl = function(params)
 {
@@ -64,7 +67,8 @@ greppy.DataGrid.prototype.buildUrl = function(params)
  * Perform an AJAX request to load table rows
  * and fill the table with the results.
  *
- * @return void
+ * @param {Array} params - Array of params to use for building the url
+ * @param {Function} callback - Function to call on finish
  */
 greppy.DataGrid.prototype.loadAndRebuild = function(params, callback)
 {
@@ -101,8 +105,6 @@ greppy.DataGrid.prototype.loadAndRebuild = function(params, callback)
 
 /**
  * Reset all filters.
- *
- * @return void
  */
 greppy.DataGrid.prototype.reset = function()
 {
@@ -132,7 +134,9 @@ greppy.DataGrid.prototype.reset = function()
 /**
  * Load by all settings.
  *
- * @return void
+ * @param {Boolean} [rows] - Load and build rows - Default: true
+ * @param {Boolean} [pagination] - Load and build pagination - Default: true
+ * @param {Integer} [page] - Pass page number to load (dont use the user-selected)
  */
 greppy.DataGrid.prototype.load = function(rows, pagination, page)
 {

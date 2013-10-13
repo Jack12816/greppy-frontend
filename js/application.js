@@ -11,7 +11,6 @@ greppy.Application = function()
  * @param {String|Object} body - Body of the modal
  * @param {Object} options - Options for the modal
  * @param {Array} buttons - Buttons declarations
- * @return void
  */
 greppy.Application.prototype.dialog = function(body, options, buttons)
 {

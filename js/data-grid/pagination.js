@@ -1,5 +1,8 @@
 /*
  * @constructor
+ *
+ * @param {Object} datagrid - DataGrid instance
+ * @param {Object} datagridElement - jQuery Element of the datagrid
  */
 greppy.Paginator = function(datagrid, datagridElement)
 {
@@ -79,7 +82,7 @@ greppy.Paginator = function(datagrid, datagridElement)
  * Get all relevant parameters.
  *
  * @param {Integer} [page] - Page number to load
- * @return void
+ * @return {Array}
  */
 greppy.Paginator.prototype.getParameters = function(page)
 {

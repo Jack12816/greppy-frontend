@@ -9,7 +9,6 @@ greppy.Styler = function()
  * Styles a fileupload input in the manner of bootstrap 3.
  *
  * @param {String|Object} elem Maybe a String or a jQuery object
- * @returns {undefined}
  */
 greppy.Styler.prototype.styleUpload = function(elem)
 {
@@ -69,7 +68,6 @@ greppy.Styler.prototype.validateStyleUpload = function(elem)
  * Styles an input element to be adjustable via buttons.
  *
  * @param {String|Object} elem Maybe a String or a jQuery object
- * @returns {undefined}
  */
 greppy.Styler.prototype.styleNumber = function(elem)
 {
@@ -128,7 +126,6 @@ greppy.Styler.prototype.validateStyleNumber = function(elem)
  * @param {String|Object} el Maybe a String or a jQuery object.
  * @param {String} showEvent Name of the event which is showing the overlay when fired.
  * @param {String} removeEvent Name of the event which is removing the overlay when fired.
- * @returns {undefined}
  */
 greppy.Styler.prototype.initOverlay = function(el, showEvent, removeEvent)
 {
@@ -169,7 +166,6 @@ greppy.Styler.prototype.initOverlay = function(el, showEvent, removeEvent)
  *
  * @param {Object} target Non-jQuery object where the spinner is placed
  * @param {Object} opts The options for the spinner. Optional.
- * @returns {undefined}
  */
 greppy.Styler.prototype.initSpinner = function(target, opts) {
     opts = opts || {

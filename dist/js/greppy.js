@@ -1,8 +1,8 @@
 /**
  * Greppy Frontend Application Class
+ *
  * @constructor
  */
-
 var greppy = {};
 
 /**
@@ -18,7 +18,6 @@ greppy.Application = function()
  * @param {String|Object} body - Body of the modal
  * @param {Object} options - Options for the modal
  * @param {Array} buttons - Buttons declarations
- * @return void
  */
 greppy.Application.prototype.dialog = function(body, options, buttons)
 {
@@ -135,6 +134,9 @@ greppy.Controller.prototype.link = function(action, params)
 
 /**
  * @constructor
+ *
+ * @param {Object} table - jQuery object of the table to  use for the DataGrid
+ * @param {Object} [options] - Options to use for the DataGrid
  */
 greppy.DataGrid = function(table, options)
 {
@@ -144,7 +146,7 @@ greppy.DataGrid = function(table, options)
     this.search   = new greppy.Search(this, table);
     this.sort     = new greppy.Sort(this, table);
     this.paginate = new greppy.Paginator(this, table);
-    this.options  = options;
+    this.options  = options || {};
 
     this.options.softDeletion = ('undefined' !== typeof options.softDeletion) ?
                                     options.softDeletion : true;
@@ -165,7 +167,7 @@ greppy.DataGrid = function(table, options)
  * Build URL with given params.
  *
  * @param {Array} params - Parameters to add to the request
- * @return void
+ * @return {String}
  */
 greppy.DataGrid.prototype.buildUrl = function(params)
 {
@@ -199,7 +201,8 @@ greppy.DataGrid.prototype.buildUrl = function(params)
  * Perform an AJAX request to load table rows
  * and fill the table with the results.
  *
- * @return void
+ * @param {Array} params - Array of params to use for building the url
+ * @param {Function} callback - Function to call on finish
  */
 greppy.DataGrid.prototype.loadAndRebuild = function(params, callback)
 {
@@ -236,8 +239,6 @@ greppy.DataGrid.prototype.loadAndRebuild = function(params, callback)
 
 /**
  * Reset all filters.
- *
- * @return void
  */
 greppy.DataGrid.prototype.reset = function()
 {
@@ -267,7 +268,9 @@ greppy.DataGrid.prototype.reset = function()
 /**
  * Load by all settings.
  *
- * @return void
+ * @param {Boolean} [rows] - Load and build rows - Default: true
+ * @param {Boolean} [pagination] - Load and build pagination - Default: true
+ * @param {Integer} [page] - Pass page number to load (dont use the user-selected)
  */
 greppy.DataGrid.prototype.load = function(rows, pagination, page)
 {
@@ -311,6 +314,9 @@ greppy.DataGrid.prototype.load = function(rows, pagination, page)
 
 /*
  * @constructor
+ *
+ * @param {Object} datagrid - DataGrid instance
+ * @param {Object} datagridElement - jQuery Element of the datagrid
  */
 greppy.Paginator = function(datagrid, datagridElement)
 {
@@ -390,7 +396,7 @@ greppy.Paginator = function(datagrid, datagridElement)
  * Get all relevant parameters.
  *
  * @param {Integer} [page] - Page number to load
- * @return void
+ * @return {Array}
  */
 greppy.Paginator.prototype.getParameters = function(page)
 {
@@ -402,6 +408,9 @@ greppy.Paginator.prototype.getParameters = function(page)
 
 /**
  * @constructor
+ *
+ * @param {Object} datagrid - DataGrid instance
+ * @param {Object} datagridElement - jQuery Element of the datagrid
  */
 greppy.Search = function(datagrid, datagridElement)
 {
@@ -460,7 +469,6 @@ greppy.Search = function(datagrid, datagridElement)
  *
  * @params {String} property - Name of the property to search for
  * @params {String} placeholder - Placeholder of the search box
- * @return void
  */
 greppy.Search.prototype.settings = function(property, placeholder)
 {
@@ -476,8 +484,6 @@ greppy.Search.prototype.settings = function(property, placeholder)
 
 /**
  * Clear the search box.
- *
- * @return void
  */
 greppy.Search.prototype.clear = function()
 {
@@ -487,7 +493,7 @@ greppy.Search.prototype.clear = function()
 /**
  * Get all relevant parameters.
  *
- * @return void
+ * @return {Array}
  */
 greppy.Search.prototype.getParameters = function()
 {
@@ -507,6 +513,9 @@ greppy.Search.prototype.getParameters = function()
 
 /**
  * @constructor
+ *
+ * @param {Object} datagrid - DataGrid instance
+ * @param {Object} datagridElement - jQuery Element of the datagrid
  */
 greppy.Sort = function(datagrid, datagridElement)
 {
@@ -526,7 +535,6 @@ greppy.Sort = function(datagrid, datagridElement)
  * Toggle the sorting of a column.
  *
  * @param {Object} th - Table header to toggle
- * @return void
  */
 greppy.Sort.prototype.toggle = function(th)
 {
@@ -563,7 +571,7 @@ greppy.Sort.prototype.toggle = function(th)
 /**
  * Get all relevant parameters.
  *
- * @return void
+ * @return {Array}
  */
 greppy.Sort.prototype.getParameters = function()
 {
@@ -590,6 +598,7 @@ greppy.Sanitizer = function()
 
 /**
  * Converts a given string or object to a jQuery object and checks for it's existence.
+ *
  * @param {String|Object} elem
  * @returns {Object} jQuery-object
  */
@@ -606,8 +615,8 @@ greppy.Sanitizer.prototype.toJquery = function(elem)
 
 /**
  * Throws an error if a jQuery object contains more than one element.
+ *
  * @param {Object} elem jQuery object
- * @returns {undefined}
  */
 greppy.Sanitizer.prototype.assertSingle = function(elem)
 {
@@ -627,7 +636,6 @@ greppy.Styler = function()
  * Styles a fileupload input in the manner of bootstrap 3.
  *
  * @param {String|Object} elem Maybe a String or a jQuery object
- * @returns {undefined}
  */
 greppy.Styler.prototype.styleUpload = function(elem)
 {
@@ -687,7 +695,6 @@ greppy.Styler.prototype.validateStyleUpload = function(elem)
  * Styles an input element to be adjustable via buttons.
  *
  * @param {String|Object} elem Maybe a String or a jQuery object
- * @returns {undefined}
  */
 greppy.Styler.prototype.styleNumber = function(elem)
 {
@@ -746,7 +753,6 @@ greppy.Styler.prototype.validateStyleNumber = function(elem)
  * @param {String|Object} el Maybe a String or a jQuery object.
  * @param {String} showEvent Name of the event which is showing the overlay when fired.
  * @param {String} removeEvent Name of the event which is removing the overlay when fired.
- * @returns {undefined}
  */
 greppy.Styler.prototype.initOverlay = function(el, showEvent, removeEvent)
 {
@@ -787,7 +793,6 @@ greppy.Styler.prototype.initOverlay = function(el, showEvent, removeEvent)
  *
  * @param {Object} target Non-jQuery object where the spinner is placed
  * @param {Object} opts The options for the spinner. Optional.
- * @returns {undefined}
  */
 greppy.Styler.prototype.initSpinner = function(target, opts) {
     opts = opts || {

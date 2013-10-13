@@ -1,5 +1,8 @@
 /**
  * @constructor
+ *
+ * @param {Object} datagrid - DataGrid instance
+ * @param {Object} datagridElement - jQuery Element of the datagrid
  */
 greppy.Search = function(datagrid, datagridElement)
 {
@@ -58,7 +61,6 @@ greppy.Search = function(datagrid, datagridElement)
  *
  * @params {String} property - Name of the property to search for
  * @params {String} placeholder - Placeholder of the search box
- * @return void
  */
 greppy.Search.prototype.settings = function(property, placeholder)
 {
@@ -74,8 +76,6 @@ greppy.Search.prototype.settings = function(property, placeholder)
 
 /**
  * Clear the search box.
- *
- * @return void
  */
 greppy.Search.prototype.clear = function()
 {
@@ -85,7 +85,7 @@ greppy.Search.prototype.clear = function()
 /**
  * Get all relevant parameters.
  *
- * @return void
+ * @return {Array}
  */
 greppy.Search.prototype.getParameters = function()
 {

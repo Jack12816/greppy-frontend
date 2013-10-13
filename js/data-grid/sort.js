@@ -1,5 +1,8 @@
 /**
  * @constructor
+ *
+ * @param {Object} datagrid - DataGrid instance
+ * @param {Object} datagridElement - jQuery Element of the datagrid
  */
 greppy.Sort = function(datagrid, datagridElement)
 {
@@ -19,7 +22,6 @@ greppy.Sort = function(datagrid, datagridElement)
  * Toggle the sorting of a column.
  *
  * @param {Object} th - Table header to toggle
- * @return void
  */
 greppy.Sort.prototype.toggle = function(th)
 {
@@ -56,7 +58,7 @@ greppy.Sort.prototype.toggle = function(th)
 /**
  * Get all relevant parameters.
  *
- * @return void
+ * @return {Array}
  */
 greppy.Sort.prototype.getParameters = function()
 {

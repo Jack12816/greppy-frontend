@@ -57,7 +57,10 @@ greppy.DataGrid.prototype.buildUrl = function(params)
     }
 
     params.forEach(function(param) {
-        url += ('&' + param.name + '=' + encodeURIComponent(param.value));
+
+        if (param.value) {
+            url += ('&' + param.name + '=' + encodeURIComponent(param.value));
+        }
     });
 
     return url;
@@ -127,7 +130,7 @@ greppy.DataGrid.prototype.reset = function()
         });
 
     } else {
-        load();
+        reset();
     }
 };
 

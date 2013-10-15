@@ -151,7 +151,9 @@ greppy.DataGrid = function(table, options)
     this.options.softDeletion = ('undefined' !== typeof options.softDeletion) ?
                                     options.softDeletion : true;
 
-    s.initOverlay(this.table, 'gDatagridLoading', 'gDatagridRebuilt');
+    if (0 < table.length) {
+        s.initOverlay(this.table, 'gDatagridLoading', 'gDatagridRebuilt');
+    }
 
     // Wrap twitter bs events to prevent race conditions
     $('.btn').on({

@@ -1,6 +1,7 @@
 /**
  * Greppy Frontend Application Class
  *
+ * @version 0.4.0
  * @constructor
  */
 var greppy = {};

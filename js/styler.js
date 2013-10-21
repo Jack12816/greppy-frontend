@@ -8,15 +8,15 @@ greppy.Styler = function()
 /**
  * Styles a fileupload input in the manner of bootstrap 3.
  *
- * @param {String|Object} elem Maybe a String or a jQuery object
+ * @param {String|Object} el Maybe a String or a jQuery object
  */
-greppy.Styler.prototype.styleUpload = function(elem)
+greppy.Styler.prototype.styleUpload = function(el)
 {
-    elem = this.validateStyleUpload(elem);
+    el = this.validateStyleUpload(el);
 
-    var newUploadSel = 'div[data-fileuploadname="' + elem.name + '"]';
+    var newUploadSel = 'div[data-fileuploadname="' + el.name + '"]';
 
-    var markup = '<div class="input-group" data-fileuploadname="' + elem.name + '">' +
+    var markup = '<div class="input-group" data-fileuploadname="' + el.name + '">' +
         '<span class="input-group-addon"><i class="icon-file"></i></span>' +
         '<div class="form-control"><span class="file-path"></span></div>' +
                 '<span class="input-group-btn">' +
@@ -24,61 +24,61 @@ greppy.Styler.prototype.styleUpload = function(elem)
                 '</span>' +
         '</div>';
 
-    elem.after(markup);
+    el.after(markup);
 
-    elem.on('change', function() {
+    el.on('change', function() {
         $(newUploadSel + ' .file-path').text($(this).val().split('\\').pop());
     });
 
     $(newUploadSel + ' button, ' + newUploadSel + ' .form-control').on('click', function() {
 
-        elem.trigger('click');
+        el.trigger('click');
 
         return false;
     });
 
-    elem.hide();
+    el.hide();
 };
 
 /**
  * Helper function that validates an input[type="file"] element.
  *
- * @param {String|Object} elem A fileupload element or a selector that's pointing to one.
+ * @param {String|Object} el A fileupload element or a selector that's pointing to one.
  * @returns {Object} jQuery object
  */
-greppy.Styler.prototype.validateStyleUpload = function(elem)
+greppy.Styler.prototype.validateStyleUpload = function(el)
 {
     var name;
 
-    elem = $(elem);
+    el = $(el);
 
-    if (1 !== elem.length) {
-        throw new Error('Expected single element to style, but got ' + elem.length);
+    if (1 !== el.length) {
+        throw new Error('Expected single element to style, but got ' + el.length);
     }
 
-    name = elem.attr('name');
+    name = el.attr('name');
 
     if (!name || $('*[name="' + name + '"]').length > 1) {
-        throw new Error('Element needs to have a unique name!');
+        throw new Error('Element needs to have a unique name');
     }
 
-    return elem;
+    return el;
 };
 
 /**
  * Styles an input element to be adjustable via buttons.
  *
- * @param {String|Object} elem Maybe a String or a jQuery object
+ * @param {String|Object} el Maybe a String or a jQuery object
  */
-greppy.Styler.prototype.styleNumber = function(elem)
+greppy.Styler.prototype.styleNumber = function(el)
 {
-    elem = this.validateStyleNumber(elem);
+    el = this.validateStyleNumber(el);
 
-    elem.wrap('<div class="input-group greppy-container-num"></div>');
+    el.wrap('<div class="input-group greppy-container-num"></div>');
 
-    elem.addClass('pull-left');
+    el.addClass('pull-left');
 
-    elem.after('<div class="input-group-btn pull-left">' +
+    el.after('<div class="input-group-btn pull-left">' +
             '<button class="btn btn-default g-add" type="button">' +
                 '<i class="icon-plus"></i>' +
             '</button>&nbsp;' +
@@ -87,34 +87,34 @@ greppy.Styler.prototype.styleNumber = function(elem)
             '</button>' +
     '</div>');
 
-    elem.next('.input-group-btn').find('.g-add').on('click', function() {
-        var val = (isNaN(parseInt(elem.val(), 10))) ? 0 : parseInt(elem.val(), 10);
-        val     = (elem.attr('data-max') < (val + 1)) ? val : val + 1;
-        elem.val(val);
+    el.next('.input-group-btn').find('.g-add').on('click', function() {
+        var val = (isNaN(parseInt(el.val(), 10))) ? 0 : parseInt(el.val(), 10);
+        val     = (el.attr('data-max') < (val + 1)) ? val : val + 1;
+        el.val(val);
     });
 
-    elem.next('.input-group-btn').find('.g-substract').on('click', function() {
-        var val = (isNaN(parseInt(elem.val(), 10))) ? 0 : parseInt(elem.val(), 10);
-        val     = (elem.attr('data-min') > (val - 1)) ? val : val - 1;
-        elem.val(val);
+    el.next('.input-group-btn').find('.g-substract').on('click', function() {
+        var val = (isNaN(parseInt(el.val(), 10))) ? 0 : parseInt(el.val(), 10);
+        val     = (el.attr('data-min') > (val - 1)) ? val : val - 1;
+        el.val(val);
     });
 };
 
 /**
  * Helper function which does the validation for styleNumber.
  *
- * @param {String|Object} elem Maybe a String or a jQuery object
+ * @param {String|Object} el Maybe a String or a jQuery object
  * @returns {Object} jQuery object
  */
-greppy.Styler.prototype.validateStyleNumber = function(elem)
+greppy.Styler.prototype.validateStyleNumber = function(el)
 {
-    elem = $(elem);
+    el = $(el);
 
-    if ('INPUT' !== elem.prop('tagName')) {
-        throw new Error('Element needs to be an input!');
+    if ('INPUT' !== el.prop('tagName')) {
+        throw new Error('Element needs to be an input');
     }
 
-    return elem;
+    return el;
 };
 
 
@@ -183,7 +183,7 @@ greppy.Styler.prototype.initSpinner = function(target, opts) {
         shadow: false, // Whether to render a shadow
         hwaccel: true, // Whether to use hardware acceleration
         className: 'spinner', // The CSS class to assign to the spinner
-        zIndex: 2e9, // The z-index (defaults to 2000000000)
+        zIndex: 2e9 // The z-index (defaults to 2000000000)
     };
 
     this.spinner = new Spinner(opts).spin(target);

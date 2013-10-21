@@ -41,19 +41,20 @@ greppy.Styler.prototype.styleUpload = function(elem)
 };
 
 /**
- * Helper function that validates an input[type="files"] element.
+ * Helper function that validates an input[type="file"] element.
  *
  * @param {String|Object} elem A fileupload element or a selector that's pointing to one.
  * @returns {Object} jQuery object
  */
 greppy.Styler.prototype.validateStyleUpload = function(elem)
 {
-    var s = new greppy.Sanitizer();
     var name;
 
-    elem = s.toJquery(elem);
+    elem = $(elem);
 
-    s.assertSingle(elem);
+    if (1 !== elem.length) {
+        throw new Error('Expected single element to style, but got ' + elem.length);
+    }
 
     name = elem.attr('name');
 
@@ -100,16 +101,14 @@ greppy.Styler.prototype.styleNumber = function(elem)
 };
 
 /**
- * Helper function, which does the validation for styleNumber.
+ * Helper function which does the validation for styleNumber.
  *
  * @param {String|Object} elem Maybe a String or a jQuery object
  * @returns {Object} jQuery object
  */
 greppy.Styler.prototype.validateStyleNumber = function(elem)
 {
-    var s = new greppy.Sanitizer();
-
-    elem = s.toJquery(elem);
+    elem = $(elem);
 
     if ('INPUT' !== elem.prop('tagName')) {
         throw new Error('Element needs to be an input!');
@@ -129,13 +128,15 @@ greppy.Styler.prototype.validateStyleNumber = function(elem)
  */
 greppy.Styler.prototype.initOverlay = function(el, showEvent, removeEvent)
 {
-    var s = new greppy.Sanitizer();
     var self      = this;
     var overlayId = 'gOverlay' + (new Date).getTime();
     var evts = {};
 
-    el = s.toJquery(el);
-    s.assertSingle(el);
+    el = $(el);
+
+    if (1 !== el.length) {
+        throw new Error('Expected single element for overlay, but got ' + el.length);
+    }
 
     evts[showEvent] = function() {
         el.parent().find('#' + overlayId).remove();

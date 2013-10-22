@@ -152,6 +152,8 @@ greppy.DataGrid = function(table, options)
     this.options.softDeletion = ('undefined' !== typeof options.softDeletion) ?
                                     options.softDeletion : true;
 
+    this.options.url = options.url || document.URL;
+
     if (0 < table.length) {
         s.initOverlay(this.table, 'gDatagridLoading', 'gDatagridRebuilt');
     }
@@ -175,7 +177,7 @@ greppy.DataGrid = function(table, options)
 greppy.DataGrid.prototype.buildUrl = function(params)
 {
     var self = this;
-    var url  = document.URL;
+    var url  = this.options.url;
     params   = params || [];
 
     if (this.options.softDeletion) {

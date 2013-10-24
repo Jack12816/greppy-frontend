@@ -1,7 +1,7 @@
 /**
  * Greppy Frontend Application Class
  *
- * @version 0.4.1
+ * @version 0.4.2
  * @constructor
  */
 var greppy = {};
@@ -338,6 +338,13 @@ greppy.Paginator = function(datagrid, datagridElement)
 
     // Page clicked
     doc.on('click', '.pagination a[data-page]', function() {
+
+        var page = $(this).attr('data-page');
+
+        if (self.page == page) {
+            return;
+        }
+
         self.page = $(this).attr('data-page');
         self.datagrid.load();
     });

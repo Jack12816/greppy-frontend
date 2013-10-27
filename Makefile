@@ -1,3 +1,4 @@
+SHELL=/bin/bash
 VERSION:=$(shell node -e 'console.log(require("./package").version);')
 
 all: dist

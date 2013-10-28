@@ -47,3 +47,6 @@
 .greppy-container-num .btn + .btn {
   margin-left: -5px;
 }
+.greppy-overlay {
+  z-index: 10;
+}

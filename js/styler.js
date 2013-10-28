@@ -141,7 +141,7 @@ greppy.Styler.prototype.initOverlay = function(el, showEvent, removeEvent)
     evts[showEvent] = function() {
         el.parent().find('#' + overlayId).remove();
 
-        el.after('<div id="' + overlayId + '" />');
+        el.after('<div class="greppy-overlay" id="' + overlayId + '" />');
 
         $('#' + overlayId).css({
             background : 'rgba(255, 255, 255, 0.6)',

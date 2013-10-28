@@ -50,3 +50,29 @@
 .greppy-overlay {
   z-index: 10;
 }
+.greppy-validator-invalid {
+  color: #e9322d;
+}
+.greppy-validator-invalid.form-control {
+  border-color: #e9322d;
+  -moz-box-shadow: 0 0 6px #f8b9b7;
+  -webkit-box-shadow: 0 0 6px #f8b9b7;
+  box-shadow: 0 0 6px #f8b9b7;
+}
+.greppy-validator-invalid.btn-group {
+  -moz-box-shadow: 0 0 6px #f8b9b7;
+  -webkit-box-shadow: 0 0 6px #f8b9b7;
+  box-shadow: 0 0 6px #f8b9b7;
+}
+.greppy-validator-invalid.btn-group .btn {
+  color: #e9322d;
+  border-color: #e9322d;
+}
+.greppy-validator-msg {
+  position: absolute;
+  padding: 4px;
+  border: 1px solid #e9322d;
+  border-radius: 4px;
+  background: #ccc;
+}
+/* Mixins */

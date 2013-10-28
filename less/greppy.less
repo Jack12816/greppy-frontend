@@ -3,6 +3,12 @@
  *
  * @version {{version}}
  */
+
+//@import "mixins";
+
+@invalidColor: #e9322d;
+@invalidShadowColor: #f8b9b7;
+
 .table th, .table td {
     vertical-align: middle !important;
 }
@@ -61,4 +67,35 @@
 
 .greppy-overlay {
     z-index: 10;
+}
+
+.greppy-validator-invalid {
+    color: @invalidColor;
+    &.form-control {
+        border-color: @invalidColor;
+        .box-shadow(0, 0, 6px, @invalidShadowColor);
+    }
+    &.btn-group {
+        .box-shadow(0, 0, 6px, @invalidShadowColor);
+        & .btn {
+            color: @invalidColor;
+            border-color: @invalidColor;
+        }
+    }
+}
+
+.greppy-validator-msg {
+    position: absolute;
+    padding: 4px;
+    border: 1px solid @invalidColor;
+    border-radius: 4px;
+    background: #ccc;
+}
+
+/* Mixins */
+
+.box-shadow (@x; @y; @blur; @color) {
+    -moz-box-shadow: @arguments;
+    -webkit-box-shadow: @arguments;
+    box-shadow: @arguments;
 }

@@ -12,22 +12,31 @@ greppy.Styler = function()
  */
 greppy.Styler.prototype.styleUpload = function(el)
 {
+    function showFilename() {
+        $(newUploadSel + ' .file-path').text(el.val().split('\\').pop());
+    }
+
     el = this.validateStyleUpload(el);
 
-    var newUploadSel = 'div[data-fileuploadname="' + el.name + '"]';
+    var newUploadSel = 'div[data-fileuploadname="' + el.attr('name') + '"]';
 
-    var markup = '<div class="input-group" data-fileuploadname="' + el.name + '">' +
+    var markup = '<div class="input-group" data-fileuploadname="' + el.attr('name') + '"' +
+        ' data-greppy-validator-mark="' + el.attr('name') +'">' +
         '<span class="input-group-addon"><i class="icon-file"></i></span>' +
         '<div class="form-control"><span class="file-path"></span></div>' +
                 '<span class="input-group-btn">' +
-                    '<button id="myBtn" class="btn btn-default">Datei wählen</button>' +
+                    '<button class="btn btn-default">Datei wählen</button>' +
                 '</span>' +
         '</div>';
 
     el.after(markup);
 
+    if (el.val()) {
+        showFilename();
+    }
+
     el.on('change', function() {
-        $(newUploadSel + ' .file-path').text($(this).val().split('\\').pop());
+        showFilename();
     });
 
     $(newUploadSel + ' button, ' + newUploadSel + ' .form-control').on('click', function() {
@@ -44,7 +53,7 @@ greppy.Styler.prototype.styleUpload = function(el)
  * Helper function that validates an input[type="file"] element.
  *
  * @param {String|Object} el A fileupload element or a selector that's pointing to one.
- * @returns {Object} jQuery object
+ * @returns {jQuery}
  */
 greppy.Styler.prototype.validateStyleUpload = function(el)
 {

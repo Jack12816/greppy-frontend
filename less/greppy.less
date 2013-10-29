@@ -4,8 +4,6 @@
  * @version {{version}}
  */
 
-//@import "mixins";
-
 @invalidColor: #e9322d;
 @invalidShadowColor: #f8b9b7;
 
@@ -78,21 +76,28 @@
     &.btn-group {
         .box-shadow(0, 0, 6px, @invalidShadowColor);
         & .btn {
-            color: @invalidColor;
-            border-color: @invalidColor;
+            .invalidBlock
+        }
+    }
+    &.input-group {
+        .box-shadow(0, 0, 6px, @invalidShadowColor);
+        & .input-group-addon, & .form-control, & .input-group-btn .btn {
+            .invalidBlock
         }
     }
 }
 
 .greppy-validator-msg {
     position: absolute;
-    padding: 4px;
-    border: 1px solid @invalidColor;
-    border-radius: 4px;
-    background: #ccc;
+    z-index: 5;
 }
 
 /* Mixins */
+
+.invalidBlock () {
+    color: @invalidColor;
+    border-color: @invalidColor;
+}
 
 .box-shadow (@x; @y; @blur; @color) {
     -moz-box-shadow: @arguments;

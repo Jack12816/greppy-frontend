@@ -40,13 +40,13 @@ greppy.Application.prototype.dialog = function(body, options, buttons)
         {
             label    : 'Cancel',
             class    : 'btn btn-default',
-            icon     : 'icon-remove',
+            icon     : 'fa-times',
             callback : options.cancel || function(callback) {callback();}
         },
         {
             label    : 'Ok',
             class    : 'btn btn-primary',
-            icon     : 'icon-ok',
+            icon     : 'fa-check',
             callback : options.ok || function(callback) {callback();}
         }
     ];
@@ -54,7 +54,7 @@ greppy.Application.prototype.dialog = function(body, options, buttons)
     buttons.forEach(function(btn) {
 
         var btnObj = $('<a href="#" class="' + btn.class + '">'
-                        + '<i class="' + btn.icon + '"></i> '
+                        + '<i class="fa ' + btn.icon + '"></i> '
                         + btn.label
                         + '</a>');
 

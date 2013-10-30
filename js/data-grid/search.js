@@ -17,7 +17,7 @@ greppy.Search = function(datagrid, datagridElement)
 
         var th = $(itm);
         th.html($('<span>&nbsp;' + th.text() + '&nbsp;</span>'))
-        th.prepend($('<i class="search-trigger icon-search text-muted"></i>'));
+        th.prepend($('<i class="search-trigger fa fa-search text-muted"></i>'));
     });
 
     // Bind events

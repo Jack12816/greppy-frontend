@@ -48,13 +48,13 @@ greppy.Application.prototype.dialog = function(body, options, buttons)
         {
             label    : 'Cancel',
             class    : 'btn btn-default',
-            icon     : 'icon-remove',
+            icon     : 'fa-times',
             callback : options.cancel || function(callback) {callback();}
         },
         {
             label    : 'Ok',
             class    : 'btn btn-primary',
-            icon     : 'icon-ok',
+            icon     : 'fa-check',
             callback : options.ok || function(callback) {callback();}
         }
     ];
@@ -62,7 +62,7 @@ greppy.Application.prototype.dialog = function(body, options, buttons)
     buttons.forEach(function(btn) {
 
         var btnObj = $('<a href="#" class="' + btn.class + '">'
-                        + '<i class="' + btn.icon + '"></i> '
+                        + '<i class="fa ' + btn.icon + '"></i> '
                         + btn.label
                         + '</a>');
 
@@ -440,7 +440,7 @@ greppy.Search = function(datagrid, datagridElement)
 
         var th = $(itm);
         th.html($('<span>&nbsp;' + th.text() + '&nbsp;</span>'))
-        th.prepend($('<i class="search-trigger icon-search text-muted"></i>'));
+        th.prepend($('<i class="search-trigger fa fa-search text-muted"></i>'));
     });
 
     // Bind events
@@ -562,12 +562,12 @@ greppy.Sort.prototype.toggle = function(th)
     var dir = th.attr('data-sort');
 
     if (!dir) {
-        th.append($('<i class="direction text-muted icon-arrow-down"></i>'));
+        th.append($('<i class="direction text-muted fa fa-arrow-down"></i>'));
         th.attr('data-sort', 'asc');
     }
 
     if ('asc' === dir) {
-        th.find('.direction').removeClass('icon-arrow-down').addClass('icon-arrow-up');
+        th.find('.direction').removeClass('fa-arrow-down').addClass('fa-arrow-up');
         th.attr('data-sort', 'desc');
     }
 
@@ -626,7 +626,7 @@ greppy.Styler.prototype.styleUpload = function(el)
 
     var markup = '<div class="input-group" data-fileuploadname="' + el.attr('name') + '"' +
         ' data-greppy-validator-mark="' + el.attr('name') +'">' +
-        '<span class="input-group-addon"><i class="icon-file"></i></span>' +
+        '<span class="input-group-addon"><i class="fa fa-file"></i></span>' +
         '<div class="form-control"><span class="file-path"></span></div>' +
                 '<span class="input-group-btn">' +
                     '<button class="btn btn-default">Datei wählen</button>' +
@@ -693,10 +693,10 @@ greppy.Styler.prototype.styleNumber = function(el)
 
     el.after('<div class="input-group-btn pull-left">' +
             '<button class="btn btn-default g-add" type="button">' +
-                '<i class="icon-plus"></i>' +
+                '<i class="fa fa-plus"></i>' +
             '</button>&nbsp;' +
             '<button class="btn btn-default g-substract" type="button">' +
-                '<i class="icon-minus"></i>' +
+                '<i class="fa fa-minus"></i>' +
             '</button>' +
     '</div>');
 

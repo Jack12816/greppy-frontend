@@ -22,7 +22,7 @@ greppy.Styler.prototype.styleUpload = function(el)
 
     var markup = '<div class="input-group" data-fileuploadname="' + el.attr('name') + '"' +
         ' data-greppy-validator-mark="' + el.attr('name') +'">' +
-        '<span class="input-group-addon"><i class="icon-file"></i></span>' +
+        '<span class="input-group-addon"><i class="fa fa-file"></i></span>' +
         '<div class="form-control"><span class="file-path"></span></div>' +
                 '<span class="input-group-btn">' +
                     '<button class="btn btn-default">Datei wählen</button>' +
@@ -89,10 +89,10 @@ greppy.Styler.prototype.styleNumber = function(el)
 
     el.after('<div class="input-group-btn pull-left">' +
             '<button class="btn btn-default g-add" type="button">' +
-                '<i class="icon-plus"></i>' +
+                '<i class="fa fa-plus"></i>' +
             '</button>&nbsp;' +
             '<button class="btn btn-default g-substract" type="button">' +
-                '<i class="icon-minus"></i>' +
+                '<i class="fa fa-minus"></i>' +
             '</button>' +
     '</div>');
 

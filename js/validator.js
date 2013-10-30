@@ -53,7 +53,18 @@ greppy.Validator.prototype.init = function ()
  */
 greppy.Validator.prototype.isUniqueValidator = function(el)
 {
-    return this.uniqueValidators.filter('[name="' + $(el).attr('name') + '"]').is(el);
+    return this.getUniqueValidator(el).is(el);
+};
+
+/**
+ * Gets the unique element of a passed element.
+ *
+ * @param {Object} el
+ * @returns {jQuery}
+ */
+greppy.Validator.prototype.getUniqueValidator = function(el)
+{
+    return this.uniqueValidators.filter('[name="' + $(el).attr('name') + '"]');
 };
 
 /**
@@ -150,7 +161,7 @@ greppy.Validator.prototype.removeInvalidMark = function(el)
  */
 greppy.Validator.prototype.showMsg = function(el)
 {
-    el       = $(el);
+    el       = this.getUniqueValidator(el);
     var mark = this.getMark(el);
     var self = this;
 

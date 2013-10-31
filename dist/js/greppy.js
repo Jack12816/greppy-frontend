@@ -48,13 +48,13 @@ greppy.Application.prototype.dialog = function(body, options, buttons)
         {
             label    : 'Cancel',
             class    : 'btn btn-default',
-            icon     : 'icon-remove',
+            icon     : 'fa-times',
             callback : options.cancel || function(callback) {callback();}
         },
         {
             label    : 'Ok',
             class    : 'btn btn-primary',
-            icon     : 'icon-ok',
+            icon     : 'fa-check',
             callback : options.ok || function(callback) {callback();}
         }
     ];
@@ -62,7 +62,7 @@ greppy.Application.prototype.dialog = function(body, options, buttons)
     buttons.forEach(function(btn) {
 
         var btnObj = $('<a href="#" class="' + btn.class + '">'
-                        + '<i class="' + btn.icon + '"></i> '
+                        + '<i class="fa ' + btn.icon + '"></i> '
                         + btn.label
                         + '</a>');
 
@@ -440,7 +440,7 @@ greppy.Search = function(datagrid, datagridElement)
 
         var th = $(itm);
         th.html($('<span>&nbsp;' + th.text() + '&nbsp;</span>'))
-        th.prepend($('<i class="search-trigger icon-search text-muted"></i>'));
+        th.prepend($('<i class="search-trigger fa fa-search text-muted"></i>'));
     });
 
     // Bind events
@@ -562,12 +562,12 @@ greppy.Sort.prototype.toggle = function(th)
     var dir = th.attr('data-sort');
 
     if (!dir) {
-        th.append($('<i class="direction text-muted icon-arrow-down"></i>'));
+        th.append($('<i class="direction text-muted fa fa-arrow-down"></i>'));
         th.attr('data-sort', 'asc');
     }
 
     if ('asc' === dir) {
-        th.find('.direction').removeClass('icon-arrow-down').addClass('icon-arrow-up');
+        th.find('.direction').removeClass('fa-arrow-down').addClass('fa-arrow-up');
         th.attr('data-sort', 'desc');
     }
 
@@ -616,22 +616,31 @@ greppy.Styler = function()
  */
 greppy.Styler.prototype.styleUpload = function(el)
 {
+    function showFilename() {
+        $(newUploadSel + ' .file-path').text(el.val().split('\\').pop());
+    }
+
     el = this.validateStyleUpload(el);
 
-    var newUploadSel = 'div[data-fileuploadname="' + el.name + '"]';
+    var newUploadSel = 'div[data-fileuploadname="' + el.attr('name') + '"]';
 
-    var markup = '<div class="input-group" data-fileuploadname="' + el.name + '">' +
-        '<span class="input-group-addon"><i class="icon-file"></i></span>' +
+    var markup = '<div class="input-group" data-fileuploadname="' + el.attr('name') + '"' +
+        ' data-greppy-validator-mark="' + el.attr('name') +'">' +
+        '<span class="input-group-addon"><i class="fa fa-file"></i></span>' +
         '<div class="form-control"><span class="file-path"></span></div>' +
                 '<span class="input-group-btn">' +
-                    '<button id="myBtn" class="btn btn-default">Datei wählen</button>' +
+                    '<button class="btn btn-default">Datei wählen</button>' +
                 '</span>' +
         '</div>';
 
     el.after(markup);
 
+    if (el.val()) {
+        showFilename();
+    }
+
     el.on('change', function() {
-        $(newUploadSel + ' .file-path').text($(this).val().split('\\').pop());
+        showFilename();
     });
 
     $(newUploadSel + ' button, ' + newUploadSel + ' .form-control').on('click', function() {
@@ -648,7 +657,7 @@ greppy.Styler.prototype.styleUpload = function(el)
  * Helper function that validates an input[type="file"] element.
  *
  * @param {String|Object} el A fileupload element or a selector that's pointing to one.
- * @returns {Object} jQuery object
+ * @returns {jQuery}
  */
 greppy.Styler.prototype.validateStyleUpload = function(el)
 {
@@ -684,10 +693,10 @@ greppy.Styler.prototype.styleNumber = function(el)
 
     el.after('<div class="input-group-btn pull-left">' +
             '<button class="btn btn-default g-add" type="button">' +
-                '<i class="icon-plus"></i>' +
+                '<i class="fa fa-plus"></i>' +
             '</button>&nbsp;' +
             '<button class="btn btn-default g-substract" type="button">' +
-                '<i class="icon-minus"></i>' +
+                '<i class="fa fa-minus"></i>' +
             '</button>' +
     '</div>');
 
@@ -791,6 +800,228 @@ greppy.Styler.prototype.initSpinner = function(target, opts) {
     };
 
     this.spinner = new Spinner(opts).spin(target);
+};
+
+/**
+ * @constructor
+ */
+greppy.Validator = function()
+{
+};
+
+/**
+ * Initializes greppy validators.
+ */
+greppy.Validator.prototype.init = function ()
+{
+    var self              = this;
+    var allValidators     = $('input, select, textarea').filter('.greppy-validator');
+    this.uniqueValidators = this.getUniqueValidators(allValidators);
+
+    allValidators.on({
+        invalid: function(e) {
+            $(this).trigger('gValidationInvalid');
+            e.preventDefault();
+        },
+        change: function() {
+            $(this).trigger('gValidationUpdate');
+        },
+        keyup: function() {
+            $(this).trigger('gValidationUpdate');
+        }
+    });
+
+    $(document).on({
+        gValidationUpdate: function(e) {
+
+            // check if it's valid or invalid
+            self.validate(e.target);
+        },
+        gValidationInvalid: function(e) {
+
+            if (self.isUniqueValidator(e.target)) {
+                self.markInvalid(self.getMark(e.target));
+                self.showMsg(e.target);
+            }
+
+            e.preventDefault();
+        }
+    });
+};
+
+/**
+ * Determines if a passed element is in the set of unique validators.
+ *
+ * @param {Object} el
+ * @returns {Boolean}
+ */
+greppy.Validator.prototype.isUniqueValidator = function(el)
+{
+    return this.getUniqueValidator(el).is(el);
+};
+
+/**
+ * Gets the unique element of a passed element.
+ *
+ * @param {Object} el
+ * @returns {jQuery}
+ */
+greppy.Validator.prototype.getUniqueValidator = function(el)
+{
+    return this.uniqueValidators.filter('[name="' + $(el).attr('name') + '"]');
+};
+
+/**
+ * Filters the validators to avoid double names.
+ *
+ * @param {jQuery} allValidators
+ * @returns {jQuery}
+ */
+greppy.Validator.prototype.getUniqueValidators = function(allValidators)
+{
+    var uniques = $();
+
+    allValidators.each(function(idx, el) {
+        el = $(el);
+
+        if (el.attr('name') &&
+                uniques.filter('[name="' + $(el).attr('name') + '"]').length) {
+            return;
+        }
+
+        uniques = uniques.add(el);
+    });
+
+    return uniques;
+};
+
+/**
+ * Gets the element which should be marked if an error occurs.
+ *
+ * @param {jQuery} el The validator.
+ * @returns {jQuery}
+ */
+greppy.Validator.prototype.getMark = function (el)
+{
+    el = $(el);
+    var name = el.attr('name');
+    var result;
+
+    if (null === name) {
+        return el;
+    }
+
+    result = $('*[data-greppy-validator-mark="' + name + '"]');
+
+    if (0 === result.length && el.hasClass('multiselect')) {
+        result = el.nextAll('.btn-group');
+    }
+
+    return 0 < result.length ? result : el;
+};
+
+/**
+ * Validates an element.
+ *
+ * @param {Object} el The element to validate.
+ */
+greppy.Validator.prototype.validate = function (el)
+{
+    if (false === el.checkValidity()) {
+
+        this.markInvalid(this.getMark(el));
+        this.showMsg(el);
+        return;
+    }
+
+    this.removeInvalidMark(this.getMark(el));
+    this.removeMsg(this.getMark(el));
+};
+
+/**
+ * Marks the provided element as invalid.
+ *
+ * @param {Object} el
+ */
+greppy.Validator.prototype.markInvalid = function(el)
+{
+    $(el).addClass('greppy-validator-invalid');
+};
+
+/**
+ * Removes an invalid mark from the provided element.
+ *
+ * @param {Object} el
+ */
+greppy.Validator.prototype.removeInvalidMark = function(el)
+{
+    $(el).removeClass('greppy-validator-invalid');
+};
+
+/**
+ * Shows the validation message of a provided element.
+ *
+ * @param {type} el
+ */
+greppy.Validator.prototype.showMsg = function(el)
+{
+    el       = this.getUniqueValidator(el);
+    var mark = this.getMark(el);
+    var self = this;
+
+    if (this.hasActiveMsg(el)) {
+        return;
+    }
+
+    $('<div class="greppy-validator-msg btn btn-danger" data-greppy-validator-name="' + el.attr('name') + '" />')
+    .html(el.attr('data-greppy-validator-msg') || 'Validation failed')
+    .insertAfter(mark)
+    .hide()
+    .fadeIn()
+    .css({
+        top: mark.position().top + mark.outerHeight() + 4,
+        left: mark.position().left
+    })
+    .on('mouseleave', function() {
+        self.removeMsg(mark);
+    });
+};
+
+/**
+ * Returns wether the passed element has an active message.
+ *
+ * @param {jQuery} el
+ * @returns {Boolean}
+ */
+greppy.Validator.prototype.hasActiveMsg = function(el)
+{
+    var name = el.attr('name');
+
+    if (name && $('.greppy-validator-msg[data-greppy-validator-name="' + name + '"]').length) {
+        return true;
+    }
+
+    return false;
+};
+
+/**
+ * Removes the msg-element of a provided mark element, if there's any.
+ *
+ * @param {Object} el The mark element
+ * @param {Boolean} fast No fading out; fast removing.
+ */
+greppy.Validator.prototype.removeMsg = function(el, fast)
+{
+    el = $(el).nextAll('.greppy-validator-msg');
+
+    if (fast) {
+        el.remove();
+        return;
+    }
+
+    el.fadeOut(function() {
+        el.remove();
+    });
 };
 
 greppy.app = new greppy.Application();

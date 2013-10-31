@@ -34,12 +34,12 @@ greppy.Sort.prototype.toggle = function(th)
     var dir = th.attr('data-sort');
 
     if (!dir) {
-        th.append($('<i class="direction text-muted icon-arrow-down"></i>'));
+        th.append($('<i class="direction text-muted fa fa-arrow-down"></i>'));
         th.attr('data-sort', 'asc');
     }
 
     if ('asc' === dir) {
-        th.find('.direction').removeClass('icon-arrow-down').addClass('icon-arrow-up');
+        th.find('.direction').removeClass('fa-arrow-down').addClass('fa-arrow-up');
         th.attr('data-sort', 'desc');
     }
 

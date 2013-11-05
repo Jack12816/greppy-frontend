@@ -79,8 +79,11 @@
   color: #e9322d;
   border-color: #e9322d;
 }
+.greppy-validator-invalid.greppy-container-num .input-group-btn .btn {
+  color: #e9322d;
+  border-color: #e9322d;
+}
 .greppy-validator-msg {
   position: absolute;
   z-index: 5;
 }
-/* Mixins */

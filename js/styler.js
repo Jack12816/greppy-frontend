@@ -83,7 +83,8 @@ greppy.Styler.prototype.styleNumber = function(el)
 {
     el = this.validateStyleNumber(el);
 
-    el.wrap('<div class="input-group greppy-container-num"></div>');
+    el.wrap('<div class="input-group greppy-container-num" ' +
+            'data-greppy-validator-mark="' + el.attr('name') + '"></div>');
 
     el.addClass('pull-left');
 

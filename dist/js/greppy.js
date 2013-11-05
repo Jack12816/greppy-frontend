@@ -687,7 +687,8 @@ greppy.Styler.prototype.styleNumber = function(el)
 {
     el = this.validateStyleNumber(el);
 
-    el.wrap('<div class="input-group greppy-container-num"></div>');
+    el.wrap('<div class="input-group greppy-container-num" ' +
+            'data-greppy-validator-mark="' + el.attr('name') + '"></div>');
 
     el.addClass('pull-left');
 
@@ -815,21 +816,12 @@ greppy.Validator = function()
 greppy.Validator.prototype.init = function ()
 {
     var self              = this;
-    var allValidators     = $('input, select, textarea').filter('.greppy-validator');
-    this.uniqueValidators = this.getUniqueValidators(allValidators);
+    this.allValidators     = $('input, select, textarea').filter('.greppy-validator');
+    this.uniqueValidators = this.getUniqueValidators(this.allValidators);
 
-    allValidators.on({
-        invalid: function(e) {
-            $(this).trigger('gValidationInvalid');
-            e.preventDefault();
-        },
-        change: function() {
-            $(this).trigger('gValidationUpdate');
-        },
-        keyup: function() {
-            $(this).trigger('gValidationUpdate');
-        }
-    });
+    this.bindEvent('invalid', 'gValidationInvalid');
+    this.bindEvent('change', 'gValidationUpdate');
+    this.bindEvent('keyup', 'gValidationUpdate');
 
     $(document).on({
         gValidationUpdate: function(e) {
@@ -844,6 +836,28 @@ greppy.Validator.prototype.init = function ()
                 self.showMsg(e.target);
             }
 
+            e.preventDefault();
+        }
+    });
+};
+
+/**
+ * Bind an event to trigger Greppy validator events.
+ *
+ * @param {String} origEvtName Name of the event to be bound.
+ * @param {String} gEvtName May be 'gValidationInvalid' or 'gValidationUpdate'.
+ */
+greppy.Validator.prototype.bindEvent = function(origEvtName, gEvtName)
+{
+    if ('gValidationInvalid' !== gEvtName && 'gValidationUpdate' !== gEvtName) {
+        throw new Error('No such Greppy validator event exists: ' + gEvtName);
+    }
+
+    this.allValidators.on(origEvtName, function(e) {
+
+        $(this).trigger(gEvtName);
+
+        if ('gValidationInvalid' === gEvtName) {
             e.preventDefault();
         }
     });

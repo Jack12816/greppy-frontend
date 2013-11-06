@@ -1,6 +1,6 @@
 {
     "name": "greppy",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "main": ["./dist/js/greppy.js", "./dist/css/greppy.css"],
     "dependencies": {
         "bootstrap": "3.0.0",

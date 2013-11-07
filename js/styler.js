@@ -83,30 +83,37 @@ greppy.Styler.prototype.styleNumber = function(el)
 {
     el = this.validateStyleNumber(el);
 
-    el.wrap('<div class="input-group greppy-container-num" ' +
+    el.each(function(idx, el) {
+
+        el = $(el);
+
+        el.wrap('<div class="input-group greppy-container-num" ' +
             'data-greppy-validator-mark="' + el.attr('name') + '"></div>');
 
-    el.addClass('pull-left');
+        el.addClass('pull-left');
 
-    el.after('<div class="input-group-btn pull-left">' +
-            '<button class="btn btn-default g-add" type="button">' +
-                '<i class="fa fa-plus"></i>' +
-            '</button>&nbsp;' +
-            '<button class="btn btn-default g-substract" type="button">' +
-                '<i class="fa fa-minus"></i>' +
-            '</button>' +
-    '</div>');
+        el.after('<div class="input-group-btn pull-left">' +
+                '<button class="btn btn-default g-add" type="button">' +
+                    '<i class="fa fa-plus"></i>' +
+                '</button>&nbsp;' +
+                '<button class="btn btn-default g-substract" type="button">' +
+                    '<i class="fa fa-minus"></i>' +
+                '</button>' +
+        '</div>');
 
-    el.next('.input-group-btn').find('.g-add').on('click', function() {
-        var val = (isNaN(parseInt(el.val(), 10))) ? 0 : parseInt(el.val(), 10);
-        val     = (el.attr('data-max') < (val + 1)) ? val : val + 1;
-        el.val(val);
-    });
+        el.next('.input-group-btn').find('.g-add').on('click', function() {
+            var val = (isNaN(parseInt(el.val(), 10))) ? 0 : parseInt(el.val(), 10);
+            val     = (el.attr('data-max') < (val + 1)) ? val : val + 1;
+            el.val(val);
+            el.trigger('change');
+        });
 
-    el.next('.input-group-btn').find('.g-substract').on('click', function() {
-        var val = (isNaN(parseInt(el.val(), 10))) ? 0 : parseInt(el.val(), 10);
-        val     = (el.attr('data-min') > (val - 1)) ? val : val - 1;
-        el.val(val);
+        el.next('.input-group-btn').find('.g-substract').on('click', function() {
+            var val = (isNaN(parseInt(el.val(), 10))) ? 0 : parseInt(el.val(), 10);
+            val     = (el.attr('data-min') > (val - 1)) ? val : val - 1;
+            el.val(val);
+            el.trigger('change');
+        });
     });
 };
 
@@ -120,9 +127,11 @@ greppy.Styler.prototype.validateStyleNumber = function(el)
 {
     el = $(el);
 
-    if ('INPUT' !== el.prop('tagName')) {
-        throw new Error('Element needs to be an input');
-    }
+    el.each(function(idx, el) {
+        if ('INPUT' !== $(el).prop('tagName')) {
+            throw new Error('Element needs to be an input');
+        }
+    });
 
     return el;
 };

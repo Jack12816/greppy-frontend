@@ -767,12 +767,10 @@ greppy.Styler.prototype.initOverlay = function(el, showEvent, removeEvent)
         el.after('<div class="greppy-overlay" id="' + overlayId + '" />');
 
         $('#' + overlayId).css({
-            background : 'rgba(255, 255, 255, 0.6)',
-            position   : 'absolute',
-            top        : el.position().top,
-            left       : el.position().left,
-            width      : el.outerWidth(),
-            height     : el.outerHeight()
+            top    : el.position().top,
+            left   : el.position().left,
+            width  : el.outerWidth(),
+            height : el.outerHeight()
         });
 
         self.initSpinner(document.getElementById(overlayId));

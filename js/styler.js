@@ -77,15 +77,21 @@ greppy.Styler.prototype.validateStyleUpload = function(el)
 /**
  * Styles an input element to be adjustable via buttons.
  *
- * @param {String|Object} el Maybe a String or a jQuery object
+ * @param {String|jQuery} el The element(s) to style
  */
 greppy.Styler.prototype.styleNumber = function(el)
 {
+    var self = this;
+
     el = this.validateStyleNumber(el);
 
     el.each(function(idx, el) {
 
         el = $(el);
+
+        if (self.isNumber(el)) {
+            self.cleanNumber(el);
+        }
 
         el.wrap('<div class="input-group greppy-container-num" ' +
             'data-greppy-validator-mark="' + el.attr('name') + '"></div>');
@@ -118,6 +124,34 @@ greppy.Styler.prototype.styleNumber = function(el)
 };
 
 /**
+ * Determines wether the passed element is a number-styled input.
+ *
+ * @param {jQuery} el
+ * @returns {Boolean}
+ */
+greppy.Styler.prototype.isNumber = function(el)
+{
+    if (el.parent().hasClass('greppy-container-num')) {
+        return true;
+    }
+
+    return false;
+};
+
+/**
+ * Clears an input from remaining stuff of Greppy number to get a plain input.
+ *
+ * @param {type} el
+ * @returns {undefined}
+ */
+greppy.Styler.prototype.cleanNumber = function(el)
+{
+    el.unwrap();
+    el.next('.input-group-btn').remove();
+    el.off();
+};
+
+/**
  * Helper function which does the validation for styleNumber.
  *
  * @param {String|Object} el Maybe a String or a jQuery object
@@ -135,7 +169,6 @@ greppy.Styler.prototype.validateStyleNumber = function(el)
 
     return el;
 };
-
 
 /**
  * Creates an overlay which is displayed on top of an element, when a specified

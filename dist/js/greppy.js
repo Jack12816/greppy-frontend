@@ -681,15 +681,21 @@ greppy.Styler.prototype.validateStyleUpload = function(el)
 /**
  * Styles an input element to be adjustable via buttons.
  *
- * @param {String|Object} el Maybe a String or a jQuery object
+ * @param {String|jQuery} el The element(s) to style
  */
 greppy.Styler.prototype.styleNumber = function(el)
 {
+    var self = this;
+
     el = this.validateStyleNumber(el);
 
     el.each(function(idx, el) {
 
         el = $(el);
+
+        if (self.isNumber(el)) {
+            self.cleanNumber(el);
+        }
 
         el.wrap('<div class="input-group greppy-container-num" ' +
             'data-greppy-validator-mark="' + el.attr('name') + '"></div>');
@@ -722,6 +728,34 @@ greppy.Styler.prototype.styleNumber = function(el)
 };
 
 /**
+ * Determines wether the passed element is a number-styled input.
+ *
+ * @param {jQuery} el
+ * @returns {Boolean}
+ */
+greppy.Styler.prototype.isNumber = function(el)
+{
+    if (el.parent().hasClass('greppy-container-num')) {
+        return true;
+    }
+
+    return false;
+};
+
+/**
+ * Clears an input from remaining stuff of Greppy number to get a plain input.
+ *
+ * @param {type} el
+ * @returns {undefined}
+ */
+greppy.Styler.prototype.cleanNumber = function(el)
+{
+    el.unwrap();
+    el.next('.input-group-btn').remove();
+    el.off();
+};
+
+/**
  * Helper function which does the validation for styleNumber.
  *
  * @param {String|Object} el Maybe a String or a jQuery object
@@ -739,7 +773,6 @@ greppy.Styler.prototype.validateStyleNumber = function(el)
 
     return el;
 };
-
 
 /**
  * Creates an overlay which is displayed on top of an element, when a specified
@@ -822,9 +855,9 @@ greppy.Validator = function()
  */
 greppy.Validator.prototype.init = function ()
 {
-    var self              = this;
-    this.allValidators     = $('input, select, textarea').filter('.greppy-validator');
-    this.uniqueValidators = this.getUniqueValidators(this.allValidators);
+    var self           = this;
+    this.allValidators = $('input, select, textarea').filter('.greppy-validator');
+    this.events        = [];
 
     this.bindEvent('invalid', 'gValidationInvalid');
     this.bindEvent('change', 'gValidationUpdate');
@@ -838,10 +871,8 @@ greppy.Validator.prototype.init = function ()
         },
         gValidationInvalid: function(e) {
 
-            if (self.isUniqueValidator(e.target)) {
-                self.markInvalid(self.getMark(e.target));
-                self.showMsg(e.target);
-            }
+            self.markInvalid(self.getMark(e.target));
+            self.showMsg(e.target);
 
             e.preventDefault();
         }
@@ -856,64 +887,41 @@ greppy.Validator.prototype.init = function ()
  */
 greppy.Validator.prototype.bindEvent = function(origEvtName, gEvtName)
 {
+    var self = this;
+
     if ('gValidationInvalid' !== gEvtName && 'gValidationUpdate' !== gEvtName) {
         throw new Error('No such Greppy validator event exists: ' + gEvtName);
     }
 
-    this.allValidators.on(origEvtName, function(e) {
+    this.events.push({
+        origEvtName : origEvtName,
+        gEvtName    : gEvtName
+    });
 
+    $(this.allValidators).each(function(idx, el) {
+        self.bindEventToValidator(el, origEvtName, gEvtName);
+    });
+};
+
+/**
+ * This binds an element's event to a specified greppy Validator event.
+ *
+ * @param {jQuery} validator
+ * @param {String} origEvtName
+ * @param {String} gEvtName
+ */
+greppy.Validator.prototype.bindEventToValidator = function(validator,
+        origEvtName, gEvtName)
+{
+    validator = $(validator);
+
+    validator.on(origEvtName, function(e) {
         $(this).trigger(gEvtName);
 
         if ('gValidationInvalid' === gEvtName) {
             e.preventDefault();
         }
     });
-};
-
-/**
- * Determines if a passed element is in the set of unique validators.
- *
- * @param {Object} el
- * @returns {Boolean}
- */
-greppy.Validator.prototype.isUniqueValidator = function(el)
-{
-    return this.getUniqueValidator(el).is(el);
-};
-
-/**
- * Gets the unique element of a passed element.
- *
- * @param {Object} el
- * @returns {jQuery}
- */
-greppy.Validator.prototype.getUniqueValidator = function(el)
-{
-    return this.uniqueValidators.filter('[name="' + $(el).attr('name') + '"]');
-};
-
-/**
- * Filters the validators to avoid double names.
- *
- * @param {jQuery} allValidators
- * @returns {jQuery}
- */
-greppy.Validator.prototype.getUniqueValidators = function(allValidators)
-{
-    var uniques = $();
-
-    allValidators.each(function(idx, el) {
-        el = $(el);
-
-        if (el.attr('name') &&
-                uniques.filter('[name="' + $(el).attr('name') + '"]').length) {
-            return;
-        }
-
-        uniques = uniques.add(el);
-    });
-
-    return uniques;
 };
 
 /**
@@ -932,13 +940,43 @@ greppy.Validator.prototype.getMark = function (el)
         return el;
     }
 
-    result = $('*[data-greppy-validator-mark="' + name + '"]');
+    result = el.parents('*[data-greppy-validator-mark="' + name + '"]');
 
     if (0 === result.length && el.hasClass('multiselect')) {
         result = el.nextAll('.btn-group');
     }
 
     return 0 < result.length ? result : el;
+};
+
+/**
+ * Add a validator to the current set of validators.
+ *
+ * @param {type} el
+ * @returns {undefined}
+ */
+greppy.Validator.prototype.addValidator = function(el)
+{
+    if (!$(el).hasClass('greppy-validator')) {
+        throw new Error('Element passed is not a Greppy validator!');
+    }
+
+    this.allValidators.add(el);
+    this.bindAllEventsToValidator(el);
+};
+
+/**
+ * Applies the defined events to the specified validator.
+ *
+ * @param {jQuery} validator
+ */
+greppy.Validator.prototype.bindAllEventsToValidator = function(validator)
+{
+    var self = this;
+
+    this.events.forEach(function(el, idx) {
+        self.bindEventToValidator(validator, el.origEvtName, el.gEvtName);
+    });
 };
 
 /**
@@ -951,7 +989,7 @@ greppy.Validator.prototype.validate = function (el)
     if (false === el.checkValidity()) {
 
         this.markInvalid(this.getMark(el));
-        this.showMsg(el);
+        //this.showMsg(el);
         return;
     }
 
@@ -986,7 +1024,8 @@ greppy.Validator.prototype.removeInvalidMark = function(el)
  */
 greppy.Validator.prototype.showMsg = function(el)
 {
-    el       = this.getUniqueValidator(el);
+    //el       = this.getUniqueValidator(el);
+    el       = $(el);
     var mark = this.getMark(el);
     var self = this;
 
@@ -995,7 +1034,7 @@ greppy.Validator.prototype.showMsg = function(el)
     }
 
     $('<div class="greppy-validator-msg btn btn-danger" data-greppy-validator-name="' + el.attr('name') + '" />')
-    .html(el.attr('data-greppy-validator-msg') || 'Validation failed')
+    .html(mark.attr('data-greppy-validator-msg') || el.attr('data-greppy-validator-msg') || 'Validation failed')
     .insertAfter(mark)
     .hide()
     .fadeIn()
@@ -1017,8 +1056,9 @@ greppy.Validator.prototype.showMsg = function(el)
 greppy.Validator.prototype.hasActiveMsg = function(el)
 {
     var name = el.attr('name');
+    var mark = this.getMark(el);
 
-    if (name && $('.greppy-validator-msg[data-greppy-validator-name="' + name + '"]').length) {
+    if (name && mark.nextAll('.greppy-validator-msg[data-greppy-validator-name="' + name + '"]').length) {
         return true;
     }
 
@@ -1044,6 +1084,5 @@ greppy.Validator.prototype.removeMsg = function(el, fast)
         el.remove();
     });
 };
-
 greppy.app = new greppy.Application();
 

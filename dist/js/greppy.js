@@ -620,6 +620,10 @@ greppy.Styler.prototype.styleUpload = function(el)
         $(newUploadSel + ' .file-path').text(el.val().split('\\').pop());
     }
 
+    function showFileDialog() {
+        el.trigger('click');
+    }
+
     el = this.validateStyleUpload(el);
 
     var newUploadSel = 'div[data-fileuploadname="' + el.attr('name') + '"]';
@@ -633,7 +637,7 @@ greppy.Styler.prototype.styleUpload = function(el)
                 '</span>' +
         '</div>';
 
-    el.after(markup);
+    el.wrap(markup);
 
     if (el.val()) {
         showFilename();
@@ -643,11 +647,12 @@ greppy.Styler.prototype.styleUpload = function(el)
         showFilename();
     });
 
-    $(newUploadSel + ' button, ' + newUploadSel + ' .form-control').on('click', function() {
+    $(newUploadSel + ' button, ' + newUploadSel + ' .form-control').on('click', function(e) {
 
-        el.trigger('click');
-
-        return false;
+        // if prevents endless recursion
+        if (!$(e.target).is(el)) {
+            showFileDialog();
+        }
     });
 
     el.hide();

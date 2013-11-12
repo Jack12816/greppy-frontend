@@ -28,6 +28,30 @@ greppy.Styler.Number.prototype.style = function(el)
 };
 
 /**
+ * Helper function which ensures el fits the requirements.
+ *
+ * @param {jQuery} el
+ */
+greppy.Styler.Number.prototype.validate = function(el)
+{
+    if ('INPUT' !== el.prop('tagName')) {
+        throw new Error('Element needs to be an input');
+    }
+};
+
+/**
+ * Decides wether to cleanup the passed element.
+ *
+ * @param {jQuery} el
+ */
+greppy.Styler.Number.prototype.handleCleanup = function(el)
+{
+    if (this.isNumber(el)) {
+        this.clearStyled(el);
+    }
+};
+
+/**
  * Adds style markup to the element.
  *
  * @param {jQuery} el
@@ -113,18 +137,6 @@ greppy.Styler.Number.prototype.getSubtractedVal = function(el)
 };
 
 /**
- * Decides wether to cleanup the passed element.
- *
- * @param {jQuery} el
- */
-greppy.Styler.Number.prototype.handleCleanup = function(el)
-{
-    if (this.isNumber(el)) {
-        this.clearStyled(el);
-    }
-};
-
-/**
  * Determines wether the passed element is a number-styled input.
  *
  * @param {jQuery} el
@@ -149,16 +161,4 @@ greppy.Styler.Number.prototype.clearStyled = function(el)
     el.unwrap();
     el.next('.input-group-btn').remove();
     el.off();
-};
-
-/**
- * Helper function which ensures el fits the requirements.
- *
- * @param {jQuery} el
- */
-greppy.Styler.Number.prototype.validate = function(el)
-{
-    if ('INPUT' !== $(el).prop('tagName')) {
-        throw new Error('Element needs to be an input');
-    }
 };

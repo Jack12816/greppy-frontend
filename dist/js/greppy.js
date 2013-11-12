@@ -710,6 +710,30 @@ greppy.Styler.Number.prototype.style = function(el)
 };
 
 /**
+ * Helper function which ensures el fits the requirements.
+ *
+ * @param {jQuery} el
+ */
+greppy.Styler.Number.prototype.validate = function(el)
+{
+    if ('INPUT' !== el.prop('tagName')) {
+        throw new Error('Element needs to be an input');
+    }
+};
+
+/**
+ * Decides wether to cleanup the passed element.
+ *
+ * @param {jQuery} el
+ */
+greppy.Styler.Number.prototype.handleCleanup = function(el)
+{
+    if (this.isNumber(el)) {
+        this.clearStyled(el);
+    }
+};
+
+/**
  * Adds style markup to the element.
  *
  * @param {jQuery} el
@@ -795,18 +819,6 @@ greppy.Styler.Number.prototype.getSubtractedVal = function(el)
 };
 
 /**
- * Decides wether to cleanup the passed element.
- *
- * @param {jQuery} el
- */
-greppy.Styler.Number.prototype.handleCleanup = function(el)
-{
-    if (this.isNumber(el)) {
-        this.clearStyled(el);
-    }
-};
-
-/**
  * Determines wether the passed element is a number-styled input.
  *
  * @param {jQuery} el
@@ -832,18 +844,6 @@ greppy.Styler.Number.prototype.clearStyled = function(el)
     el.next('.input-group-btn').remove();
     el.off();
 };
-
-/**
- * Helper function which ensures el fits the requirements.
- *
- * @param {jQuery} el
- */
-greppy.Styler.Number.prototype.validate = function(el)
-{
-    if ('INPUT' !== $(el).prop('tagName')) {
-        throw new Error('Element needs to be an input');
-    }
-};
 /**
  * @constructor
  */
@@ -854,23 +854,62 @@ greppy.Styler.Upload = function()
 /**
  * Styles a fileupload input in the manner of bootstrap 3.
  *
- * @param {String|Object} el Maybe a String or a jQuery object
+ * @param {String|jQuery} el The element(s) to style
  */
 greppy.Styler.Upload.prototype.style = function(el)
 {
-    function showFilename() {
-        $(newUploadSel + ' .file-path').text(el.val().split('\\').pop());
+    var self = this;
+
+    el = $(el);
+
+    el.each(function(idx, el) {
+
+        el = $(el);
+
+        self.validate(el);
+        self.addStyles(el);
+        self.handleFilePreselected(el);
+        self.addNewFileSelectedHandler(el);
+        self.addButtonHandlers(el);
+        self.hideOriginalInput(el);
+    });
+};
+
+/**
+ * Helper function that validates an input[type="file"] element.
+ *
+ * @param {jQuery} el A fileupload element or a selector that's pointing to one
+ */
+greppy.Styler.Upload.prototype.validate = function(el)
+{
+    var name = el.attr('name');
+
+    if (!name || $('*[name="' + name + '"]').length > 1) {
+        throw new Error('Element needs to have a unique name');
     }
+};
 
-    function showFileDialog() {
-        el.trigger('click');
-    }
+/**
+ * Adds the new markup to the input element.
+ *
+ * @param {jQuery} el
+ */
+greppy.Styler.Upload.prototype.addStyles = function(el)
+{
+    var markup = this.getMarkup(el);
 
-    el = this.validate(el);
+    el.wrap(markup);
+};
 
-    var newUploadSel = 'div[data-fileuploadname="' + el.attr('name') + '"]';
-
-    var markup = '<div class="input-group" data-fileuploadname="' + el.attr('name') + '"' +
+/**
+ * Computes the markup to style an upload element.
+ *
+ * @param {jQuery} el
+ * @returns {String} The markup as HTML
+ */
+greppy.Styler.Upload.prototype.getMarkup = function(el)
+{
+    return '<div class="input-group" data-fileuploadname="' + el.attr('name') + '"' +
         ' data-greppy-validator-mark="' + el.attr('name') +'">' +
         '<span class="input-group-addon"><i class="fa fa-file"></i></span>' +
         '<div class="form-control"><span class="file-path"></span></div>' +
@@ -878,51 +917,87 @@ greppy.Styler.Upload.prototype.style = function(el)
                     '<button class="btn btn-default" type="button">Datei wählen</button>' +
                 '</span>' +
         '</div>';
-
-    el.wrap(markup);
-
-    if (el.val()) {
-        showFilename();
-    }
-
-    el.on('change', function() {
-        showFilename();
-    });
-
-    $(newUploadSel + ' button, ' + newUploadSel + ' .form-control').on('click', function(e) {
-
-        // if prevents endless recursion
-        if (!$(e.target).is(el)) {
-            showFileDialog();
-        }
-    });
-
-    el.hide();
 };
 
 /**
- * Helper function that validates an input[type="file"] element.
+ * Shows the filename of the current selected file in the specified element.
  *
- * @param {String|Object} el A fileupload element or a selector that's pointing to one.
- * @returns {jQuery}
+ * @param {jQuery} el
  */
-greppy.Styler.Upload.prototype.validate = function(el)
+greppy.Styler.Upload.prototype.showFilename = function(el)
 {
-    var name;
+    $(this.getStyledUploadSelector(el) + ' .file-path').text(el.val().split('\\').pop());
+};
 
-    el = $(el);
+/**
+ * Gets the selector of the styled upload for the specified element.
+ *
+ * @param {type} el
+ * @returns {String}
+ */
+greppy.Styler.Upload.prototype.getStyledUploadSelector = function(el)
+{
+    return 'div[data-fileuploadname="' + el.attr('name') + '"]';
+};
 
-    if (1 !== el.length) {
-        throw new Error('Expected single element to style, but got ' + el.length);
+/**
+ * Handles the displaying of files that were already selected before styling.
+ *
+ * @param {jQuery} el
+ */
+greppy.Styler.Upload.prototype.handleFilePreselected = function(el)
+{
+    if (el.val()) {
+        this.showFilename(el);
     }
+};
 
-    name = el.attr('name');
+/**
+ * Adds a handler for the selection of new files.
+ *
+ * @param {jQuery} el
+ */
+greppy.Styler.Upload.prototype.addNewFileSelectedHandler = function(el)
+{
+    var self = this;
 
-    if (!name || $('*[name="' + name + '"]').length > 1) {
-        throw new Error('Element needs to have a unique name');
-    }
+    el.on('change', function() {
+        self.showFilename(el);
+    });
+};
 
-    return el;
+greppy.Styler.Upload.prototype.addButtonHandlers = function(el)
+{
+    var self      = this;
+    var uploadSel = this.getStyledUploadSelector(el);
+
+    $(uploadSel + ' button, ' + uploadSel + ' .form-control').on('click', function(e) {
+
+        // if prevents endless recursion
+        if (!$(e.target).is(el)) {
+            self.showFileDialog(el);
+        }
+    });
+};
+
+/**
+ * Shows the file select dialog to the user.
+ *
+ * @param {jQuery} el
+ */
+greppy.Styler.Upload.prototype.showFileDialog = function(el)
+{
+    el.trigger('click');
+};
+
+/**
+ * Hides the old input element so the user doesn't notice it anymore.
+ *
+ * @param {jQuery} el The old input element to hide.
+ */
+greppy.Styler.Upload.prototype.hideOriginalInput = function(el)
+{
+    el.hide();
 };
 /**
  * @constructor

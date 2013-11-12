@@ -4,7 +4,7 @@
  * @param {Object} datagrid - DataGrid instance
  * @param {Object} datagridElement - jQuery Element of the datagrid
  */
-greppy.Search = function(datagrid, datagridElement)
+greppy.DataGrid.Search = function(datagrid, datagridElement)
 {
     var self             = this;
     this.datagrid        = datagrid;
@@ -16,7 +16,7 @@ greppy.Search = function(datagrid, datagridElement)
     this.datagridElement.find($('th[data-property]')).each(function (idx, itm) {
 
         var th = $(itm);
-        th.html($('<span>&nbsp;' + th.text() + '&nbsp;</span>'))
+        th.html($('<span>&nbsp;' + th.text() + '&nbsp;</span>'));
         th.prepend($('<i class="search-trigger fa fa-search text-muted"></i>'));
     });
 
@@ -62,7 +62,7 @@ greppy.Search = function(datagrid, datagridElement)
  * @params {String} property - Name of the property to search for
  * @params {String} placeholder - Placeholder of the search box
  */
-greppy.Search.prototype.settings = function(property, placeholder)
+greppy.DataGrid.Search.prototype.settings = function(property, placeholder)
 {
     if ('fuzzy' == property) {
         placeholder = 'Fuzzy search';
@@ -77,7 +77,7 @@ greppy.Search.prototype.settings = function(property, placeholder)
 /**
  * Clear the search box.
  */
-greppy.Search.prototype.clear = function()
+greppy.DataGrid.Search.prototype.clear = function()
 {
     this.input.val('');
 };
@@ -87,7 +87,7 @@ greppy.Search.prototype.clear = function()
  *
  * @return {Array}
  */
-greppy.Search.prototype.getParameters = function()
+greppy.DataGrid.Search.prototype.getParameters = function()
 {
     var params = [];
 

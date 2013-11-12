@@ -143,11 +143,11 @@ greppy.DataGrid = function(table, options)
 {
     var s = new greppy.Styler();
 
-    this.table    = table;
-    this.search   = new greppy.Search(this, table);
-    this.sort     = new greppy.Sort(this, table);
-    this.paginate = new greppy.Paginator(this, table);
-    this.options  = options || {};
+    this.table     = table;
+    this.search    = new greppy.DataGrid.Search(this, table);
+    this.sort      = new greppy.DataGrid.Sort(this, table);
+    this.paginator = new greppy.DataGrid.Pagination(this, table);
+    this.options   = options || {};
 
     this.options.softDeletion = ('undefined' !== typeof options.softDeletion) ?
                                     options.softDeletion : true;
@@ -225,7 +225,7 @@ greppy.DataGrid.prototype.loadAndRebuild = function(params, callback)
             type : "GET",
             url  : url
         }).done(callback);
-    }
+    };
 
     var url = this.buildUrl(params);
 
@@ -255,7 +255,7 @@ greppy.DataGrid.prototype.reset = function()
     var reset = function()
     {
         self.load(true, true, 1);
-    }
+    };
 
     if ('function' === typeof this.options.preReset) {
 
@@ -295,7 +295,7 @@ greppy.DataGrid.prototype.load = function(rows, pagination, page)
 
     params = params.concat(this.search.getParameters());
     params = params.concat(this.sort.getParameters());
-    params = params.concat(this.paginate.getParameters(page));
+    params = params.concat(this.paginator.getParameters(page));
 
     if (true === rows) {
 
@@ -326,7 +326,7 @@ greppy.DataGrid.prototype.load = function(rows, pagination, page)
  * @param {Object} datagrid - DataGrid instance
  * @param {Object} datagridElement - jQuery Element of the datagrid
  */
-greppy.Paginator = function(datagrid, datagridElement)
+greppy.DataGrid.Pagination = function(datagrid, datagridElement)
 {
     var self             = this;
     var doc              = $(document);
@@ -413,7 +413,7 @@ greppy.Paginator = function(datagrid, datagridElement)
  * @param {Integer} [page] - Page number to load
  * @return {Array}
  */
-greppy.Paginator.prototype.getParameters = function(page)
+greppy.DataGrid.Pagination.prototype.getParameters = function(page)
 {
     return [
         {name: 'page', value: page || this.page},
@@ -427,7 +427,7 @@ greppy.Paginator.prototype.getParameters = function(page)
  * @param {Object} datagrid - DataGrid instance
  * @param {Object} datagridElement - jQuery Element of the datagrid
  */
-greppy.Search = function(datagrid, datagridElement)
+greppy.DataGrid.Search = function(datagrid, datagridElement)
 {
     var self             = this;
     this.datagrid        = datagrid;
@@ -439,7 +439,7 @@ greppy.Search = function(datagrid, datagridElement)
     this.datagridElement.find($('th[data-property]')).each(function (idx, itm) {
 
         var th = $(itm);
-        th.html($('<span>&nbsp;' + th.text() + '&nbsp;</span>'))
+        th.html($('<span>&nbsp;' + th.text() + '&nbsp;</span>'));
         th.prepend($('<i class="search-trigger fa fa-search text-muted"></i>'));
     });
 
@@ -485,7 +485,7 @@ greppy.Search = function(datagrid, datagridElement)
  * @params {String} property - Name of the property to search for
  * @params {String} placeholder - Placeholder of the search box
  */
-greppy.Search.prototype.settings = function(property, placeholder)
+greppy.DataGrid.Search.prototype.settings = function(property, placeholder)
 {
     if ('fuzzy' == property) {
         placeholder = 'Fuzzy search';
@@ -500,7 +500,7 @@ greppy.Search.prototype.settings = function(property, placeholder)
 /**
  * Clear the search box.
  */
-greppy.Search.prototype.clear = function()
+greppy.DataGrid.Search.prototype.clear = function()
 {
     this.input.val('');
 };
@@ -510,7 +510,7 @@ greppy.Search.prototype.clear = function()
  *
  * @return {Array}
  */
-greppy.Search.prototype.getParameters = function()
+greppy.DataGrid.Search.prototype.getParameters = function()
 {
     var params = [];
 
@@ -532,7 +532,7 @@ greppy.Search.prototype.getParameters = function()
  * @param {Object} datagrid - DataGrid instance
  * @param {Object} datagridElement - jQuery Element of the datagrid
  */
-greppy.Sort = function(datagrid, datagridElement)
+greppy.DataGrid.Sort = function(datagrid, datagridElement)
 {
     var self             = this;
     this.datagrid        = datagrid;
@@ -551,7 +551,7 @@ greppy.Sort = function(datagrid, datagridElement)
  *
  * @param {Object} th - Table header to toggle
  */
-greppy.Sort.prototype.toggle = function(th)
+greppy.DataGrid.Sort.prototype.toggle = function(th)
 {
     this.datagridElement.find($('th[data-property]')).not(th).each(function(idx, item) {
         item = $(item);
@@ -588,7 +588,7 @@ greppy.Sort.prototype.toggle = function(th)
  *
  * @return {Array}
  */
-greppy.Sort.prototype.getParameters = function()
+greppy.DataGrid.Sort.prototype.getParameters = function()
 {
     var th = this.datagridElement.find($('th[data-property]')).not($('[data-sort=""]'));
 
@@ -607,176 +607,8 @@ greppy.Sort.prototype.getParameters = function()
  */
 greppy.Styler = function()
 {
-};
-
-/**
- * Styles a fileupload input in the manner of bootstrap 3.
- *
- * @param {String|Object} el Maybe a String or a jQuery object
- */
-greppy.Styler.prototype.styleUpload = function(el)
-{
-    function showFilename() {
-        $(newUploadSel + ' .file-path').text(el.val().split('\\').pop());
-    }
-
-    function showFileDialog() {
-        el.trigger('click');
-    }
-
-    el = this.validateStyleUpload(el);
-
-    var newUploadSel = 'div[data-fileuploadname="' + el.attr('name') + '"]';
-
-    var markup = '<div class="input-group" data-fileuploadname="' + el.attr('name') + '"' +
-        ' data-greppy-validator-mark="' + el.attr('name') +'">' +
-        '<span class="input-group-addon"><i class="fa fa-file"></i></span>' +
-        '<div class="form-control"><span class="file-path"></span></div>' +
-                '<span class="input-group-btn">' +
-                    '<button class="btn btn-default">Datei wählen</button>' +
-                '</span>' +
-        '</div>';
-
-    el.wrap(markup);
-
-    if (el.val()) {
-        showFilename();
-    }
-
-    el.on('change', function() {
-        showFilename();
-    });
-
-    $(newUploadSel + ' button, ' + newUploadSel + ' .form-control').on('click', function(e) {
-
-        // if prevents endless recursion
-        if (!$(e.target).is(el)) {
-            showFileDialog();
-        }
-    });
-
-    el.hide();
-};
-
-/**
- * Helper function that validates an input[type="file"] element.
- *
- * @param {String|Object} el A fileupload element or a selector that's pointing to one.
- * @returns {jQuery}
- */
-greppy.Styler.prototype.validateStyleUpload = function(el)
-{
-    var name;
-
-    el = $(el);
-
-    if (1 !== el.length) {
-        throw new Error('Expected single element to style, but got ' + el.length);
-    }
-
-    name = el.attr('name');
-
-    if (!name || $('*[name="' + name + '"]').length > 1) {
-        throw new Error('Element needs to have a unique name');
-    }
-
-    return el;
-};
-
-/**
- * Styles an input element to be adjustable via buttons.
- *
- * @param {String|jQuery} el The element(s) to style
- */
-greppy.Styler.prototype.styleNumber = function(el)
-{
-    var self = this;
-
-    el = this.validateStyleNumber(el);
-
-    el.each(function(idx, el) {
-
-        el = $(el);
-
-        if (self.isNumber(el)) {
-            self.cleanNumber(el);
-        }
-
-        el.wrap('<div class="input-group greppy-container-num" ' +
-            'data-greppy-validator-mark="' + el.attr('name') + '"></div>');
-
-        el.addClass('pull-left');
-
-        el.after('<div class="input-group-btn pull-left">' +
-                '<button class="btn btn-default g-add" type="button">' +
-                    '<i class="fa fa-plus"></i>' +
-                '</button>&nbsp;' +
-                '<button class="btn btn-default g-substract" type="button">' +
-                    '<i class="fa fa-minus"></i>' +
-                '</button>' +
-        '</div>');
-
-        el.next('.input-group-btn').find('.g-add').on('click', function() {
-            var val = (isNaN(parseInt(el.val(), 10))) ? 0 : parseInt(el.val(), 10);
-            val     = (el.attr('data-max') < (val + 1)) ? val : val + 1;
-            el.val(val);
-            el.trigger('change');
-        });
-
-        el.next('.input-group-btn').find('.g-substract').on('click', function() {
-            var val = (isNaN(parseInt(el.val(), 10))) ? 0 : parseInt(el.val(), 10);
-            val     = (el.attr('data-min') > (val - 1)) ? val : val - 1;
-            el.val(val);
-            el.trigger('change');
-        });
-    });
-};
-
-/**
- * Determines wether the passed element is a number-styled input.
- *
- * @param {jQuery} el
- * @returns {Boolean}
- */
-greppy.Styler.prototype.isNumber = function(el)
-{
-    if (el.parent().hasClass('greppy-container-num')) {
-        return true;
-    }
-
-    return false;
-};
-
-/**
- * Clears an input from remaining stuff of Greppy number to get a plain input.
- *
- * @param {type} el
- * @returns {undefined}
- */
-greppy.Styler.prototype.cleanNumber = function(el)
-{
-    el.unwrap();
-    el.next('.input-group-btn').remove();
-    el.off();
-};
-
-/**
- * Helper function which does the validation for styleNumber.
- *
- * @param {String|Object} el Maybe a String or a jQuery object
- * @returns {Object} jQuery object
- */
-greppy.Styler.prototype.validateStyleNumber = function(el)
-{
-    el = $(el);
-
-    el.each(function(idx, el) {
-        if ('INPUT' !== $(el).prop('tagName')) {
-            throw new Error('Element needs to be an input');
-        }
-    });
-
-    return el;
+    this.upload = new greppy.Styler.Upload();
+    this.number = new greppy.Styler.Number();
 };
 
 /**
@@ -848,6 +680,250 @@ greppy.Styler.prototype.initSpinner = function(target, opts) {
     this.spinner = new Spinner(opts).spin(target);
 };
 
+/**
+ * @constructor
+ */
+greppy.Styler.Number = function()
+{
+};
+
+/**
+ * Styles an input element to be adjustable via buttons.
+ *
+ * @param {String|jQuery} el The element(s) to style
+ */
+greppy.Styler.Number.prototype.style = function(el)
+{
+    var self = this;
+
+    el = $(el);
+
+    el.each(function(idx, el) {
+
+        el = $(el);
+
+        self.validate(el);
+        self.handleCleanup(el);
+        self.addStyles(el);
+        self.addButtonHandlers(el);
+    });
+};
+
+/**
+ * Adds style markup to the element.
+ *
+ * @param {jQuery} el
+ */
+greppy.Styler.Number.prototype.addStyles = function(el)
+{
+    el.wrap('<div class="input-group greppy-container-num" ' +
+            'data-greppy-validator-mark="' + el.attr('name') + '"></div>');
+
+    el.addClass('pull-left');
+
+    el.after('<div class="input-group-btn pull-left">' +
+            '<button class="btn btn-default g-add" type="button">' +
+                '<i class="fa fa-plus"></i>' +
+            '</button>&nbsp;' +
+            '<button class="btn btn-default g-substract" type="button">' +
+                '<i class="fa fa-minus"></i>' +
+            '</button>' +
+    '</div>');
+};
+
+/**
+ * Adds spinner buttons to the provided element.
+ *
+ * @param {jQuery} el
+ */
+greppy.Styler.Number.prototype.addButtonHandlers = function(el)
+{
+    var self = this;
+
+    el.next('.input-group-btn').find('.g-add').on('click', function() {
+
+        var val = self.getAddedVal(el);
+
+        el.val(val)
+            .trigger('change');
+    });
+
+    el.next('.input-group-btn').find('.g-substract').on('click', function() {
+
+        var val = self.getSubtractedVal(el);
+
+        el.val(val)
+            .trigger('change');
+    });
+};
+
+/**
+ * Returns the normalized number of the passed element.
+ *
+ * @param {jQuery} el
+ * @returns {Number}
+ */
+greppy.Styler.Number.prototype.getVal = function(el)
+{
+    return (isNaN(parseInt(el.val(), 10))) ? 0 : parseInt(el.val(), 10);
+};
+
+/**
+ * Returns the added number of the passed element.
+ *
+ * @param {jQuery} el
+ * @returns {Number}
+ */
+greppy.Styler.Number.prototype.getAddedVal = function(el)
+{
+    var val = this.getVal(el);
+
+    return (el.attr('data-max') < (val + 1)) ? val : val + 1;
+};
+
+/**
+ * Returns the subtracted number of the passed element.
+ *
+ * @param {jQuery} el
+ * @returns {Number}
+ */
+greppy.Styler.Number.prototype.getSubtractedVal = function(el)
+{
+    var val = this.getVal(el);
+
+    return (el.attr('data-min') > (val - 1)) ? val : val - 1;
+};
+
+/**
+ * Decides wether to cleanup the passed element.
+ *
+ * @param {jQuery} el
+ */
+greppy.Styler.Number.prototype.handleCleanup = function(el)
+{
+    if (this.isNumber(el)) {
+        this.clearStyled(el);
+    }
+};
+
+/**
+ * Determines wether the passed element is a number-styled input.
+ *
+ * @param {jQuery} el
+ * @returns {Boolean}
+ */
+greppy.Styler.Number.prototype.isNumber = function(el)
+{
+    if (el.parent().hasClass('greppy-container-num')) {
+        return true;
+    }
+
+    return false;
+};
+
+/**
+ * Clears an input from remaining stuff of Greppy number to get a plain input.
+ *
+ * @param {jQuery} el
+ */
+greppy.Styler.Number.prototype.clearStyled = function(el)
+{
+    el.unwrap();
+    el.next('.input-group-btn').remove();
+    el.off();
+};
+
+/**
+ * Helper function which ensures el fits the requirements.
+ *
+ * @param {jQuery} el
+ */
+greppy.Styler.Number.prototype.validate = function(el)
+{
+    if ('INPUT' !== $(el).prop('tagName')) {
+        throw new Error('Element needs to be an input');
+    }
+};
+/**
+ * @constructor
+ */
+greppy.Styler.Upload = function()
+{
+};
+
+/**
+ * Styles a fileupload input in the manner of bootstrap 3.
+ *
+ * @param {String|Object} el Maybe a String or a jQuery object
+ */
+greppy.Styler.Upload.prototype.style = function(el)
+{
+    function showFilename() {
+        $(newUploadSel + ' .file-path').text(el.val().split('\\').pop());
+    }
+
+    function showFileDialog() {
+        el.trigger('click');
+    }
+
+    el = this.validate(el);
+
+    var newUploadSel = 'div[data-fileuploadname="' + el.attr('name') + '"]';
+
+    var markup = '<div class="input-group" data-fileuploadname="' + el.attr('name') + '"' +
+        ' data-greppy-validator-mark="' + el.attr('name') +'">' +
+        '<span class="input-group-addon"><i class="fa fa-file"></i></span>' +
+        '<div class="form-control"><span class="file-path"></span></div>' +
+                '<span class="input-group-btn">' +
+                    '<button class="btn btn-default" type="button">Datei wählen</button>' +
+                '</span>' +
+        '</div>';
+
+    el.wrap(markup);
+
+    if (el.val()) {
+        showFilename();
+    }
+
+    el.on('change', function() {
+        showFilename();
+    });
+
+    $(newUploadSel + ' button, ' + newUploadSel + ' .form-control').on('click', function(e) {
+
+        // if prevents endless recursion
+        if (!$(e.target).is(el)) {
+            showFileDialog();
+        }
+    });
+
+    el.hide();
+};
+
+/**
+ * Helper function that validates an input[type="file"] element.
+ *
+ * @param {String|Object} el A fileupload element or a selector that's pointing to one.
+ * @returns {jQuery}
+ */
+greppy.Styler.Upload.prototype.validate = function(el)
+{
+    var name;
+
+    el = $(el);
+
+    if (1 !== el.length) {
+        throw new Error('Expected single element to style, but got ' + el.length);
+    }
+
+    name = el.attr('name');
+
+    if (!name || $('*[name="' + name + '"]').length > 1) {
+        throw new Error('Element needs to have a unique name');
+    }
+
+    return el;
+};
 /**
  * @constructor
  */

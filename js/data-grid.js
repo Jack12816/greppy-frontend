@@ -8,11 +8,11 @@ greppy.DataGrid = function(table, options)
 {
     var s = new greppy.Styler();
 
-    this.table    = table;
-    this.search   = new greppy.Search(this, table);
-    this.sort     = new greppy.Sort(this, table);
-    this.paginate = new greppy.Paginator(this, table);
-    this.options  = options || {};
+    this.table     = table;
+    this.search    = new greppy.DataGrid.Search(this, table);
+    this.sort      = new greppy.DataGrid.Sort(this, table);
+    this.paginator = new greppy.DataGrid.Pagination(this, table);
+    this.options   = options || {};
 
     this.options.softDeletion = ('undefined' !== typeof options.softDeletion) ?
                                     options.softDeletion : true;
@@ -90,7 +90,7 @@ greppy.DataGrid.prototype.loadAndRebuild = function(params, callback)
             type : "GET",
             url  : url
         }).done(callback);
-    }
+    };
 
     var url = this.buildUrl(params);
 
@@ -120,7 +120,7 @@ greppy.DataGrid.prototype.reset = function()
     var reset = function()
     {
         self.load(true, true, 1);
-    }
+    };
 
     if ('function' === typeof this.options.preReset) {
 
@@ -160,7 +160,7 @@ greppy.DataGrid.prototype.load = function(rows, pagination, page)
 
     params = params.concat(this.search.getParameters());
     params = params.concat(this.sort.getParameters());
-    params = params.concat(this.paginate.getParameters(page));
+    params = params.concat(this.paginator.getParameters(page));
 
     if (true === rows) {
 

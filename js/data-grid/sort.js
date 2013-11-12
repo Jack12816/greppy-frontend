@@ -4,7 +4,7 @@
  * @param {Object} datagrid - DataGrid instance
  * @param {Object} datagridElement - jQuery Element of the datagrid
  */
-greppy.Sort = function(datagrid, datagridElement)
+greppy.DataGrid.Sort = function(datagrid, datagridElement)
 {
     var self             = this;
     this.datagrid        = datagrid;
@@ -23,7 +23,7 @@ greppy.Sort = function(datagrid, datagridElement)
  *
  * @param {Object} th - Table header to toggle
  */
-greppy.Sort.prototype.toggle = function(th)
+greppy.DataGrid.Sort.prototype.toggle = function(th)
 {
     this.datagridElement.find($('th[data-property]')).not(th).each(function(idx, item) {
         item = $(item);
@@ -60,7 +60,7 @@ greppy.Sort.prototype.toggle = function(th)
  *
  * @return {Array}
  */
-greppy.Sort.prototype.getParameters = function()
+greppy.DataGrid.Sort.prototype.getParameters = function()
 {
     var th = this.datagridElement.find($('th[data-property]')).not($('[data-sort=""]'));
 

@@ -25,12 +25,12 @@ greppy.DataGrid.Search = function(datagrid, datagridElement)
     // Search or trash button clicked
     $('#search-trash').on('gChange', function(e) {
 
-        self.datagrid.paginate.page = 1;
+        self.datagrid.paginator.page = 1;
         self.datagrid.load();
     });
 
     $('#search-btn').on('click', function() {
-        self.datagrid.paginate.page = 1;
+        self.datagrid.paginator.page = 1;
         self.datagrid.load();
     });
 

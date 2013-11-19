@@ -154,6 +154,10 @@ greppy.DataGrid = function(table, options)
 
     this.options.url = options.url || document.URL;
 
+    if (this.options.labels) {
+        this.setProvidedLabels();
+    }
+
     if (0 < table.length) {
         s.initOverlay(this.table, 'gDatagridLoading', 'gDatagridRebuilt');
     }
@@ -320,6 +324,19 @@ greppy.DataGrid.prototype.load = function(rows, pagination, page)
     }
 };
 
+/**
+ * Apply each label provided via options to compatible instances.
+ */
+greppy.DataGrid.prototype.setProvidedLabels = function()
+{
+    for (var prop in this.options.labels) {
+
+        if (this[prop] && this[prop].setLabels) {
+
+            this[prop].setLabels(this.options.labels[prop]);
+        }
+    }
+};
 /*
  * @constructor
  *
@@ -434,6 +451,10 @@ greppy.DataGrid.Search = function(datagrid, datagridElement)
     this.datagridElement = datagridElement;
     this.input           = $('#search-input');
     this.trash           = $('#search-trash');
+    this.labels          = {
+        fuzzySearch: 'Fuzzy search',
+        searchFor: 'Search for'
+    };
 
     // Setup datagrid table headers
     this.datagridElement.find($('th[data-property]')).each(function (idx, itm) {
@@ -488,9 +509,9 @@ greppy.DataGrid.Search = function(datagrid, datagridElement)
 greppy.DataGrid.Search.prototype.settings = function(property, placeholder)
 {
     if ('fuzzy' == property) {
-        placeholder = 'Fuzzy search';
+        placeholder = this.labels.fuzzySearch;
     } else {
-        placeholder = 'Search for' + placeholder.toLowerCase();
+        placeholder = this.labels.searchFor + placeholder.toLowerCase();
     }
 
     this.input.attr('placeholder', placeholder + '..')
@@ -526,6 +547,15 @@ greppy.DataGrid.Search.prototype.getParameters = function()
     return params;
 };
 
+/**
+ * Sets custom labels, e. g. for localizations.
+ *
+ * @param {Object} labels
+ */
+greppy.DataGrid.Search.prototype.setLabels = function(labels)
+{
+    $.extend(true, this.labels, labels);
+};
 /**
  * @constructor
  *

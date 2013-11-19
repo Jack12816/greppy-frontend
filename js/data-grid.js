@@ -19,6 +19,10 @@ greppy.DataGrid = function(table, options)
 
     this.options.url = options.url || document.URL;
 
+    if (this.options.labels) {
+        this.setProvidedLabels();
+    }
+
     if (0 < table.length) {
         s.initOverlay(this.table, 'gDatagridLoading', 'gDatagridRebuilt');
     }
@@ -185,3 +189,16 @@ greppy.DataGrid.prototype.load = function(rows, pagination, page)
     }
 };
 
+/**
+ * Apply each label provided via options to compatible instances.
+ */
+greppy.DataGrid.prototype.setProvidedLabels = function()
+{
+    for (var prop in this.options.labels) {
+
+        if (this[prop] && this[prop].setLabels) {
+
+            this[prop].setLabels(this.options.labels[prop]);
+        }
+    }
+};

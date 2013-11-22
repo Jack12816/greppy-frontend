@@ -1,2 +1,4 @@
+nbproject/
+tests/deps/
 node_modules
 npm-debug.log

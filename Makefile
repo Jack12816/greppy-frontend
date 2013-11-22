@@ -21,5 +21,8 @@ css-dist:
 
 dist: js-dist css-dist
 
+test:
+	@./tests/run.sh
+
 .PHONY: dist
 

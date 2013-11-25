@@ -3,15 +3,175 @@
   <head>
     <title></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
-    <script src="http://fgnass.github.io/spin.js/dist/spin.min.js"></script>
-    <script src="../../dist/js/greppy.min.js"></script>
-    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="../../dist/css/greppy.min.css" />
+    <script src="./bower_components/jquery/jquery.min.js"></script>
+    <script src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="./bower_components/spin.js/dist/spin.min.js"></script>
+    <script src="./dist/js/greppy.min.js"></script>
+    <link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./bower_components/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="./dist/css/greppy.min.css" />
   </head>
   <body>
+    <div class="container" id="content">
+        <h2 class="page-headline">Posts
+          <div class="col-lg-5 pull-right">
+            <div class="row">
+              <div class="col-lg-4 small-gutter text-right">
+              </div>
+              <div class="col-lg-8 small-gutter text-right">
+                <div class="input-group">
+                  <input type="text" class="form-control" data-property="fuzzy" placeholder="Search fuzzy.." id="search-input">
+                  <div class="input-group-btn">
+                    <button class="btn btn-info" title="Search for the input" type="button" tabindex="-1" id="search-btn"><i class="fa fa-search"></i></button>
+                    <button class="btn btn-info" title="Reset filters" type="button" tabindex="-1" id="search-clear"><i class="fa fa-undo"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </h2>
+        <table class="table table-bordered table-striped datagrid small-bottom-margin">
+          <thead>
+            <tr>
+              <th class="text-center" title="Deletion status"><i class="fa fa-trash-o"></i></th>
+              <th data-property="title"><i class="search-trigger fa fa-search text-muted"></i><span>&nbsp;Title&nbsp;</span></th>
+              <th data-property="content"><i class="search-trigger fa fa-search text-muted"></i><span>&nbsp;Content&nbsp;</span></th>
+              <th data-property="created_at"><i class="search-trigger fa fa-search text-muted"></i><span>&nbsp;Created at&nbsp;</span></th>
+              <th><i class="icon-wrench"></i> Operations</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="min text-center"><i class="fa fa-check" data-toggle="tooltip" title="Post is not deleted"></i></td>
+              <td>Ether although palmer unseasonable adipose</td>
+              <td>Placerat sodales ultrices tristique ante. Est, amet, amet, nec, aliquam eros, mauris, justo, elementum, bibendum. Ligula fermentum arcu sollicitudin gravida rhoncus, felis volutpat, et, venenatis pretium. Nisi, vel lorem nisl, ..</td>
+              <td class="min">06/30/2010</td>
+              <td class="min no-wrap"><a class="btn btn-default" title="Show post details" href="/admin/posts/529326366be353bf2200006b"><i class="fa fa-search"></i></a>&nbsp;<a class="btn btn-warning" title="Edit this post" href="/admin/posts/529326366be353bf2200006b/edit"><i class="fa fa-pencil"></i></a>&nbsp;<a class="btn btn-danger delete-operation" data-id="529326366be353bf2200006b" title="Delete"><i class="fa fa-trash-o"></i></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="min text-center"><i class="fa fa-check" data-toggle="tooltip" title="Post is not deleted"></i></td>
+              <td>Isthmian ignoble diphtheria net retired</td>
+              <td>Tellus, nisi, natoque nec pharetra commodo, nisi, nisl fringilla a, magnis cursus dis non. Ornare ridiculus neque, duis penatibus potenti porta sollicitudin. Ac, velit, donec dictumst porta lectus accumsan, elementum, ..</td>
+              <td class="min">03/01/2011</td>
+              <td class="min no-wrap"><a class="btn btn-default" title="Show post details" href="/admin/posts/529326366be353bf2200006c"><i class="fa fa-search"></i></a>&nbsp;<a class="btn btn-warning" title="Edit this post" href="/admin/posts/529326366be353bf2200006c/edit"><i class="fa fa-pencil"></i></a>&nbsp;<a class="btn btn-danger delete-operation" data-id="529326366be353bf2200006c" title="Delete"><i class="fa fa-trash-o"></i></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="min text-center"><i class="fa fa-check" data-toggle="tooltip" title="Post is not deleted"></i></td>
+              <td>Foray bourgeois accompany fate flatter</td>
+              <td>Elementum, lacus, malesuada commodo, ligula eros laoreet integer nisl, volutpat. Aliquam, habitant consequat morbi dui dictum tempor nec blandit. Mi, cursus dictumst maecenas arcu, dolor, fames habitant neque, varius turpis ..</td>
+              <td class="min">05/25/2003</td>
+              <td class="min no-wrap"><a class="btn btn-default" title="Show post details" href="/admin/posts/529326366be353bf2200006e"><i class="fa fa-search"></i></a>&nbsp;<a class="btn btn-warning" title="Edit this post" href="/admin/posts/529326366be353bf2200006e/edit"><i class="fa fa-pencil"></i></a>&nbsp;<a class="btn btn-danger delete-operation" data-id="529326366be353bf2200006e" title="Delete"><i class="fa fa-trash-o"></i></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="min text-center"><i class="fa fa-check" data-toggle="tooltip" title="Post is not deleted"></i></td>
+              <td>Duration barium relegate erudition racehorse</td>
+              <td>Ultrices sagittis, sagittis, aenean mi, etiam dapibus turpis senectus aliquet nascetur. Lorem felis felis in vitae pellentesque pharetra sed venenatis. Auctor laoreet nunc, dui eros montes, sociis. Sociis dictumst elit ..</td>
+              <td class="min">08/26/2008</td>
+              <td class="min no-wrap"><a class="btn btn-default" title="Show post details" href="/admin/posts/529326366be353bf22000070"><i class="fa fa-search"></i></a>&nbsp;<a class="btn btn-warning" title="Edit this post" href="/admin/posts/529326366be353bf22000070/edit"><i class="fa fa-pencil"></i></a>&nbsp;<a class="btn btn-danger delete-operation" data-id="529326366be353bf22000070" title="Delete"><i class="fa fa-trash-o"></i></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="min text-center"><i class="fa fa-check" data-toggle="tooltip" title="Post is not deleted"></i></td>
+              <td>Dowdy classify devious pretense polyunsaturated</td>
+              <td>Ultrices pulvinar pulvinar est, id vivamus. Non a nulla dolor diam duis porta venenatis. Habitant mi pharetra, etiam rhoncus, enim egestas. Eleifend faucibus mauris egestas dolor, mi, pulvinar diam consequat, ..</td>
+              <td class="min">11/21/2004</td>
+              <td class="min no-wrap"><a class="btn btn-default" title="Show post details" href="/admin/posts/529326366be353bf22000071"><i class="fa fa-search"></i></a>&nbsp;<a class="btn btn-warning" title="Edit this post" href="/admin/posts/529326366be353bf22000071/edit"><i class="fa fa-pencil"></i></a>&nbsp;<a class="btn btn-danger delete-operation" data-id="529326366be353bf22000071" title="Delete"><i class="fa fa-trash-o"></i></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="min text-center"><i class="fa fa-check" data-toggle="tooltip" title="Post is not deleted"></i></td>
+              <td>Epidermis scintilla gammer narcissism truncheon</td>
+              <td>Pharetra nisi, faucibus phasellus luctus cursus malesuada nulla. A eleifend mattis urna, vestibulum dis aliquam, risus. Habitant dolor, vestibulum ullamcorper facilisi mauris tempus, tempor, lorem penatibus maecenas rutrum nisi. Sagittis, ..</td>
+              <td class="min">08/09/2011</td>
+              <td class="min no-wrap"><a class="btn btn-default" title="Show post details" href="/admin/posts/529326366be353bf22000074"><i class="fa fa-search"></i></a>&nbsp;<a class="btn btn-warning" title="Edit this post" href="/admin/posts/529326366be353bf22000074/edit"><i class="fa fa-pencil"></i></a>&nbsp;<a class="btn btn-danger delete-operation" data-id="529326366be353bf22000074" title="Delete"><i class="fa fa-trash-o"></i></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="min text-center"><i class="fa fa-check" data-toggle="tooltip" title="Post is not deleted"></i></td>
+              <td>Riddle needlework waterfall dissolve arise</td>
+              <td>Mi, arcu, tellus sapien metus, nascetur nascetur etiam. Condimentum vitae congue turpis arcu eu, dui, senectus purus tempus, arcu. Habitasse fermentum, donec in sociis. Potenti vivamus rhoncus, velit dolor, nisi, ..</td>
+              <td class="min">03/29/2000</td>
+              <td class="min no-wrap"><a class="btn btn-default" title="Show post details" href="/admin/posts/529326366be353bf22000075"><i class="fa fa-search"></i></a>&nbsp;<a class="btn btn-warning" title="Edit this post" href="/admin/posts/529326366be353bf22000075/edit"><i class="fa fa-pencil"></i></a>&nbsp;<a class="btn btn-danger delete-operation" data-id="529326366be353bf22000075" title="Delete"><i class="fa fa-trash-o"></i></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="min text-center"><i class="fa fa-check" data-toggle="tooltip" title="Post is not deleted"></i></td>
+              <td>Wonted hydrant earthy peaked substitute</td>
+              <td>Venenatis commodo cras venenatis vel, quam amet, risus, justo. Potenti auctor tempor amet, egestas eu curabitur. Orci, netus nascetur dolor velit duis netus. Sollicitudin magna sodales velit quam mollis justo, ..</td>
+              <td class="min">10/29/2013</td>
+              <td class="min no-wrap"><a class="btn btn-default" title="Show post details" href="/admin/posts/529326366be353bf22000077"><i class="fa fa-search"></i></a>&nbsp;<a class="btn btn-warning" title="Edit this post" href="/admin/posts/529326366be353bf22000077/edit"><i class="fa fa-pencil"></i></a>&nbsp;<a class="btn btn-danger delete-operation" data-id="529326366be353bf22000077" title="Delete"><i class="fa fa-trash-o"></i></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="min text-center"><i class="fa fa-check" data-toggle="tooltip" title="Post is not deleted"></i></td>
+              <td>Hobgoblin roadster miracle babushka aluminum</td>
+              <td>Pharetra neque, vestibulum, quam quisque. Mi facilisis ligula facilisis dis. Lorem luctus curabitur dignissim sociis mattis gravida venenatis nisi mus platea. In nunc a, nec habitant et habitant platea nam ..</td>
+              <td class="min">03/04/2007</td>
+              <td class="min no-wrap"><a class="btn btn-default" title="Show post details" href="/admin/posts/529326366be353bf22000078"><i class="fa fa-search"></i></a>&nbsp;<a class="btn btn-warning" title="Edit this post" href="/admin/posts/529326366be353bf22000078/edit"><i class="fa fa-pencil"></i></a>&nbsp;<a class="btn btn-danger delete-operation" data-id="529326366be353bf22000078" title="Delete"><i class="fa fa-trash-o"></i></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="min text-center"><i class="fa fa-check" data-toggle="tooltip" title="Post is not deleted"></i></td>
+              <td>Cloth accompany apiary spill loot</td>
+              <td>Dictum habitasse purus ullamcorper lectus iaculis pharetra duis maecenas. Pharetra, suspendisse non, nibh orci. Quisque enim, metus urna placerat faucibus. Suspendisse magnis euismod accumsan, interdum libero, ac, malesuada integer. Nisl ..</td>
+              <td class="min">06/24/2011</td>
+              <td class="min no-wrap"><a class="btn btn-default" title="Show post details" href="/admin/posts/529326366be353bf22000079"><i class="fa fa-search"></i></a>&nbsp;<a class="btn btn-warning" title="Edit this post" href="/admin/posts/529326366be353bf22000079/edit"><i class="fa fa-pencil"></i></a>&nbsp;<a class="btn btn-danger delete-operation" data-id="529326366be353bf22000079" title="Delete"><i class="fa fa-trash-o"></i></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="paginator">
+          <div class="paginator">
+            <div class="pull-right medium-left-margin">
+              <ul class="pagination small-bottom-margin">
+                <li class="disabled"><a data-page="1"><i class="fa fa-angle-double-left"></i></a></li>
+                <li class="active"><a>1</a></li>
+                <li><a class="pointer" data-page="2">2</a></li>
+                <li><a class="pointer" data-page="3">3</a></li>
+                <li><a class="pointer" data-page="4">4</a></li>
+                <li><a class="pointer" data-page="5">5</a></li>
+                <li><a class="pointer" data-page="2"><i class="fa fa-angle-double-right"></i></a></li>
+              </ul>
+            </div>
+            <div class="pull-right">
+              <select class="form-control" id="pagination-limit">
+                <option selected="selected">10</option>
+                <option>25</option>
+                <option>50</option>
+                <option>100</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <script>
+          /**
+           * Build DataGrid instances for the whole index page
+           */
+          var datagrid = new greppy.DataGrid($('table.datagrid'), {
+            softDeletion: true
+          });
 
+        </script>
+        <script src="./node_modules/mocha/mocha.js"></script>
+        <script src="./node_modules/chai/chai.js"></script>
+        <script>
+          mocha.ui('bdd');
+          mocha.reporter('html');
+          expect = chai.expect;
+          assert = chai.assert;
+        </script>
+        <script src="./tests/tests.js"></script>
+        <script>
+
+          if (window.mochaPhantomJS) {
+              mochaPhantomJS.run();
+          } else {
+              mocha.run();
+          }
+        </script>
+      </div>
   </body>
 </html>

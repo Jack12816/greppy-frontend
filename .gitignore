@@ -1,4 +1,5 @@
 nbproject/
+bower_components/
 tests/deps/
 node_modules
 npm-debug.log

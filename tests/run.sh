@@ -1,5 +1,7 @@
 #!/bin/sh
-# TODO: Add bower install for test deps, if they don't exist yet
-#       Then run tests
 
-cd ./tests
+bower install
+
+echo "Starting tests..."
+
+# cd ./tests/server/ && node app

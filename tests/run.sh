@@ -4,4 +4,9 @@ bower install
 
 echo "Starting tests..."
 
-# cd ./tests/server/ && node app
+node ./tests/server/app.js &
+testServerPid=$!
+
+mocha-phantomjs "http://localhost:3000/"
+
+kill $testServerPid

@@ -1,6 +1,6 @@
-
 /**
- * Module dependencies.
+ *
+ * This is a small express-powered server used only for testing.
  */
 
 var express = require('express');
@@ -13,7 +13,7 @@ var app = express();
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.use(express.favicon());
-app.use(express.logger('dev'));
+//app.use(express.logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
@@ -25,22 +25,33 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-// TODO: refactor
 app.get('/', function(req, res) {
+
+    var limit = ('25' === req.query.limit) ? 25 : 10;
+    var htmlFolder = __dirname + '/../html';
+    var fileToSend;
 
     if ('rows' === req.query.render) {
 
-        res.send('test');
+        fileToSend = htmlFolder + '/render/rows/limit' + limit + '/page' + req.query.page + '.html';
+    } else if ('pagination' === req.query.render) {
+
+        fileToSend = htmlFolder + '/render/pagination/limit' + limit + '/page' + req.query.page + '.html';
     } else {
 
-        fs.readFile(__dirname + '/../html/data-grid.html', 'utf8',
-                function(err, text) {
-
-            res.send(text);
-        });
+        fileToSend = htmlFolder + '/data-grid.html';
     }
+
+    sendFile(fileToSend, res);
 });
 
+function sendFile(fileName, res) {
+
+    fs.readFile(fileName, 'utf8', function(err, text) {
+
+        res.send(text);
+    });
+}
 
 
 http.createServer(app).listen(app.get('port'), function(){

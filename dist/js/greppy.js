@@ -369,6 +369,7 @@ greppy.DataGrid.Pagination = function(datagrid, datagridElement)
     // Page limit changed
     doc.on('change', '#pagination-limit', function() {
         self.datagrid.reset();
+        self.page = 1;
     });
 
     // Keyboard usage events

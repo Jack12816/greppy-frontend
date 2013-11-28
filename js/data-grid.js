@@ -45,8 +45,10 @@ greppy.DataGrid = function(table, options)
  */
 greppy.DataGrid.prototype.buildUrl = function(params)
 {
-    var self = this;
-    var url  = this.options.url;
+    var self  = this;
+    var url   = this.options.url;
+    var query = '';
+
     params   = params || [];
 
     if (this.options.softDeletion) {
@@ -67,11 +69,13 @@ greppy.DataGrid.prototype.buildUrl = function(params)
     params.forEach(function(param) {
 
         if (param.value) {
-            url += ('&' + param.name + '=' + encodeURIComponent(param.value));
+            query += ('&' + param.name + '=' + encodeURIComponent(param.value));
         }
     });
 
-    return url;
+    query = query.replace(/^&/, '');
+
+    return url + query;
 };
 
 /**
@@ -83,8 +87,6 @@ greppy.DataGrid.prototype.buildUrl = function(params)
  */
 greppy.DataGrid.prototype.loadAndRebuild = function(params, callback)
 {
-    this.table.trigger('gDatagridLoading');
-
     var self = this;
     params   = params || [];
 
@@ -97,6 +99,12 @@ greppy.DataGrid.prototype.loadAndRebuild = function(params, callback)
     };
 
     var url = this.buildUrl(params);
+
+    var gDatagridLoading = $.Event('gDatagridLoading');
+
+    gDatagridLoading.url = url;
+
+    this.table.trigger(gDatagridLoading);
 
     if ('function' === typeof this.options.preLoad) {
 

@@ -28,7 +28,7 @@ if ('development' == app.get('env')) {
 app.get('/', function(req, res) {
 
     var limit = ('25' === req.query.limit) ? 25 : 10;
-    var htmlFolder = __dirname + '/../html';
+    var htmlFolder = __dirname + '/../fixtures';
     var fileToSend;
 
     if ('rows' === req.query.render) {

@@ -1,8 +1,9 @@
+var rebuiltEventName = 'gDatagridRebuilt';
+var loadingEventName = 'gDatagridLoading';
+
 describe('Greppy', function() {
 
     describe('data-grid', function() {
-
-        var rebuiltEventName = 'gDatagridRebuilt';
 
         it('exists', function() {
 
@@ -91,7 +92,7 @@ describe('Greppy', function() {
 
             execOnceOnEvent(rebuiltEventName, function() {
 
-                expect(getActivePageNumber()).to.equal('1');
+                expect(getActivePageNumber()).to.equal(1);
                 done();
             });
 
@@ -124,6 +125,68 @@ describe('Greppy', function() {
 
             $('#search-clear').click();
         });
+
+        describe('request', function() {
+
+            it('should be correct for a page change to the next page', function(done) {
+
+                var nextPage = getActivePageNumber() + 1;
+
+                $(document).one(loadingEventName, function(e) {
+
+                    throwIfQueryStringDoesntMatch(e.url, 'render', 'rows');
+                    throwIfQueryStringDoesntMatch(e.url, 'page', nextPage);
+
+                    execOnceOnEvent(rebuiltEventName, done);
+                });
+
+                clickNextPageButton();
+            });
+
+            it('should be correct for a page change to the previous page', function(done) {
+
+                var prevPage = getActivePageNumber() - 1;
+
+                $(document).one(loadingEventName, function(e) {
+
+                    throwIfQueryStringDoesntMatch(e.url, 'render', 'rows');
+                    throwIfQueryStringDoesntMatch(e.url, 'page', prevPage);
+
+                    execOnceOnEvent(rebuiltEventName, done);
+                });
+
+                clickPrevPageButton();
+            });
+
+            it('should be correct for an ascending sorting of a column',
+                    function(done) {
+
+                resetDatagridAndSortingThen(function() {
+
+                    $(document).one(loadingEventName, function(e) {
+
+                        throwIfQueryStringDoesntMatch(e.url, 'render', 'rows');
+                        throwIfQueryStringDoesntMatch(e.url, 'oprop', 'content');
+                        throwIfQueryStringDoesntMatch(e.url, 'order', 'asc');
+
+                        execOnceOnEvent(rebuiltEventName, done);
+                    });
+
+                    $('th[data-property="content"] span').click();
+                });
+            });
+
+            it.skip('should be correct for a descending sorting of a column', function() {
+
+                resetDatagridAndSortingThen(function() {
+
+                    clickContentSortingThen(function() {
+
+
+                    });
+                });
+            });
+        });
     });
 });
 
@@ -133,6 +196,27 @@ function throwOnceOnEvent(evtName) {
 
         throw new Error('Event ' + evtName + ' should not be triggered!');
     });
+}
+
+function throwIfQueryStringDoesntMatch(qs, key, val) {
+
+    var isMatching  = false;
+    var keyVal      = key + '=' + val;
+    var regExpStart = new RegExp('/\?' + keyVal + '$/');
+    var regExpEnd   = new RegExp('&' + keyVal + '$');
+
+    if (-1 < qs.indexOf('?' + keyVal + '&') ||
+            qs.match(regExpStart) ||
+            -1 < qs.indexOf('&' + keyVal + '&') ||
+            qs.match(regExpEnd)) {
+
+        isMatching = true;
+    }
+
+    if (!isMatching) {
+        throw new Error('Query string doesn\'t match "' + key + '=' + val +
+            '": ' + qs);
+    }
 }
 
 function execOnceOnEvent(evtName, exec) {
@@ -150,10 +234,40 @@ function getTableEntryCount() {
 
 function getActivePageNumber() {
 
-    return $('ul.pagination li.active a').text();
+    return parseInt($('ul.pagination li.active a').text(), 10);
 }
 
 function triggerPaginationLimit(limit) {
 
     $('#pagination-limit').val(limit).trigger('change');
+}
+
+function clickNextPageButton() {
+
+    $('ul.pagination li').last().find('a').click();
+}
+
+function clickPrevPageButton() {
+
+    $('ul.pagination li').first().find('a').click();
+}
+
+function resetDatagridAndSortingThen(exec) {
+
+    $('#reset-datagrid-and-sorting').click();
+
+    execOnceOnEvent(rebuiltEventName, function() {
+
+        exec();
+    });
+}
+
+function clickContentSortingThen(exec) {
+
+    $(document).one(loadingEventName, function(e) {
+
+        exec();
+    });
+
+    $('th[data-property="content"] span').click();
 }

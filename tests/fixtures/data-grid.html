@@ -6,7 +6,7 @@
     <script src="./bower_components/jquery/jquery.min.js"></script>
     <script src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="./bower_components/spin.js/dist/spin.min.js"></script>
-    <script src="./dist/js/greppy.min.js"></script>
+    <script src="./dist/js/greppy.js"></script>
     <link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="./bower_components/font-awesome/css/font-awesome.min.css" />
     <link rel="stylesheet" href="./dist/css/greppy.min.css" />
@@ -153,6 +153,14 @@
           });
 
         </script>
+        <div>
+          <h2>Test helpers</h2>
+          <button id="reset-datagrid-and-sorting">Reset datagrid and sorting</button><br />
+          <button id="show-mocha-results">Show/hide mocha results</button>
+          <div id="mocha"></div>
+        </div>
+
+        <script src="./tests/fixtures/data-grid-footer.js"></script>
         <script src="./node_modules/mocha/mocha.js"></script>
         <script src="./node_modules/chai/chai.js"></script>
         <script>
@@ -170,6 +178,9 @@
               mocha.run();
           }
         </script>
+
       </div>
+
+
   </body>
 </html>

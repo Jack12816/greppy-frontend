@@ -56,6 +56,16 @@ greppy.DataGrid.Sort.prototype.toggle = function(th)
 };
 
 /**
+ * Removes the sorting of all datagrid columns.
+ */
+greppy.DataGrid.Sort.prototype.remove = function()
+{
+    this.datagridElement.find('th[data-property]')
+            .attr('data-sort', '')
+            .find('.direction').remove();
+};
+
+/**
  * Get all relevant parameters.
  *
  * @return {Array}

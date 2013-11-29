@@ -12,7 +12,7 @@ describe('Greppy', function() {
 
         it('should reload when clicking the search button', function(done) {
 
-            execOnceOnEvent(rebuiltEventName, done);
+            doneAfterEvent(rebuiltEventName, done);
 
             $('#search-btn').trigger('click');
         });
@@ -48,14 +48,14 @@ describe('Greppy', function() {
         it('should reload when clicking the first currently non-selected ' +
                 'pagination item', function(done) {
 
-            execOnceOnEvent(rebuiltEventName, done);
+            doneAfterEvent(rebuiltEventName, done);
 
             $('ul.pagination li:not(.disabled):not(.active)').first().find('a').click();
         });
 
         it('should reload when changing the pagination-limit', function(done) {
 
-            execOnceOnEvent(rebuiltEventName, done);
+            doneAfterEvent(rebuiltEventName, done);
 
             triggerPaginationLimit(25);
         });
@@ -67,7 +67,7 @@ describe('Greppy', function() {
             execOnceOnEvent(rebuiltEventName, function() {
 
                 // handler for rebuilt fired by pagination-button-click
-                execOnceOnEvent(rebuiltEventName, done);
+                doneAfterEvent(rebuiltEventName, done);
 
                 $('ul.pagination li.active').next().find('a').click();
             });
@@ -113,7 +113,7 @@ describe('Greppy', function() {
         it('should rebuild when clicking on a column title',
                 function(done) {
 
-            execOnceOnEvent(rebuiltEventName, done);
+            doneAfterEvent(rebuiltEventName, done);
 
             $('th[data-property="title"] span').click();
         });
@@ -121,14 +121,14 @@ describe('Greppy', function() {
         it('should rebuild when clicking the filter reset button',
                 function(done) {
 
-            execOnceOnEvent(rebuiltEventName, done);
+            doneAfterEvent(rebuiltEventName, done);
 
             $('#search-clear').click();
         });
 
-        describe('request', function() {
+        describe('sending correct requests', function() {
 
-            it('should be correct for a page change to the next page', function(done) {
+            it('should work for a page change to the next page', function(done) {
 
                 var nextPage = getActivePageNumber() + 1;
 
@@ -137,13 +137,13 @@ describe('Greppy', function() {
                     throwIfQueryStringDoesntMatch(e.url, 'render', 'rows');
                     throwIfQueryStringDoesntMatch(e.url, 'page', nextPage);
 
-                    execOnceOnEvent(rebuiltEventName, done);
+                    doneAfterEvent(rebuiltEventName, done);
                 });
 
                 clickNextPageButton();
             });
 
-            it('should be correct for a page change to the previous page', function(done) {
+            it('should work for a page change to the previous page', function(done) {
 
                 var prevPage = getActivePageNumber() - 1;
 
@@ -152,39 +152,109 @@ describe('Greppy', function() {
                     throwIfQueryStringDoesntMatch(e.url, 'render', 'rows');
                     throwIfQueryStringDoesntMatch(e.url, 'page', prevPage);
 
-                    execOnceOnEvent(rebuiltEventName, done);
+                    doneAfterEvent(rebuiltEventName, done);
                 });
 
                 clickPrevPageButton();
             });
 
-            it('should be correct for an ascending sorting of a column',
+            it('should work for an ascending sorting of a column',
                     function(done) {
 
                 resetDatagridAndSortingThen(function() {
 
-                    $(document).one(loadingEventName, function(e) {
+                    clickContentSortingThen(function(err, e) {
 
                         throwIfQueryStringDoesntMatch(e.url, 'render', 'rows');
                         throwIfQueryStringDoesntMatch(e.url, 'oprop', 'content');
                         throwIfQueryStringDoesntMatch(e.url, 'order', 'asc');
 
-                        execOnceOnEvent(rebuiltEventName, done);
+                        doneAfterEvent(rebuiltEventName, done);
                     });
-
-                    $('th[data-property="content"] span').click();
                 });
             });
 
-            it.skip('should be correct for a descending sorting of a column', function() {
+            it('should work for a descending sorting of a column',
+                    function(done) {
 
                 resetDatagridAndSortingThen(function() {
 
                     clickContentSortingThen(function() {
 
+                        clickContentSortingThen(function(err, e) {
 
+                            throwIfQueryStringDoesntMatch(e.url, 'render',
+                                    'rows');
+
+                            throwIfQueryStringDoesntMatch(e.url, 'oprop',
+                                    'content');
+
+                            throwIfQueryStringDoesntMatch(e.url, 'order',
+                                    'desc');
+
+                            doneAfterEvent(rebuiltEventName, done);
+                        });
                     });
                 });
+            });
+
+            it('should work for a reset sorting of a column',
+                    function(done) {
+
+                // TODO: get async-solution to work, remove current solution
+                /*async.waterfall([
+
+                    resetDatagridAndSortingThen,
+                    clickContentSortingThen,
+                    clickContentSortingThen,
+                    clickContentSortingThen
+                ], function(err, result) {
+
+                    console.log(result.url);
+                    doneAfterEvent(rebuiltEventName, done);
+                });*/
+
+                resetDatagridAndSortingThen(function() {
+
+                    clickContentSortingThen(function() {
+
+                        clickContentSortingThen(function() {
+
+                            clickContentSortingThen(function(err, e) {
+
+                                throwIfQueryStringDoesntMatch(e.url,
+                                        'render', 'rows');
+
+                                throwIfQueryStringHasKey(e.url,
+                                        'oprop');
+
+                                throwIfQueryStringHasKey(e.url,
+                                        'order');
+
+                                doneAfterEvent(rebuiltEventName, done);
+                            });
+                        });
+                    });
+                });
+            });
+
+            it('should work for a column specific search', function(done) {
+
+                var searchTerm = 'xyz';
+
+                execOnceOnEvent(loadingEventName, function(err, e) {
+
+                    throwIfQueryStringDoesntMatch(e.url, 'search', searchTerm);
+                    throwIfQueryStringDoesntMatch(e.url, 'sprop', 'content');
+
+                    doneAfterEvent(rebuiltEventName, done);
+                });
+
+                $('th[data-property="content"] i.search-trigger').click();
+
+                $('#search-input').val(searchTerm);
+
+                $('#search-btn').click();
             });
         });
     });
@@ -200,7 +270,16 @@ function throwOnceOnEvent(evtName) {
 
 function throwIfQueryStringDoesntMatch(qs, key, val) {
 
-    var isMatching  = false;
+    var isMatching = doesQueryStringMatch(qs, key, val);
+
+    if (!isMatching) {
+        throw new Error('Query string doesn\'t match "' + key + '=' + val +
+            '": ' + qs);
+    }
+}
+
+function doesQueryStringMatch(qs, key, val) {
+
     var keyVal      = key + '=' + val;
     var regExpStart = new RegExp('/\?' + keyVal + '$/');
     var regExpEnd   = new RegExp('&' + keyVal + '$');
@@ -210,12 +289,28 @@ function throwIfQueryStringDoesntMatch(qs, key, val) {
             -1 < qs.indexOf('&' + keyVal + '&') ||
             qs.match(regExpEnd)) {
 
-        isMatching = true;
+        return true;
     }
 
-    if (!isMatching) {
-        throw new Error('Query string doesn\'t match "' + key + '=' + val +
-            '": ' + qs);
+    return false;
+}
+
+function hasQueryStringKey(qs, key) {
+
+    if (-1 < qs.indexOf('?' + key + '=') ||
+            -1 < qs.indexOf('&' + key + '=')) {
+
+        return true;
+    }
+
+    return false;
+}
+
+function throwIfQueryStringHasKey(qs, key) {
+
+    if (hasQueryStringKey(qs, key)) {
+
+        throw new Error('Query string has forbidden key: ' + key);
     }
 }
 
@@ -223,9 +318,20 @@ function execOnceOnEvent(evtName, exec) {
 
     $(document).one(evtName, function() {
 
-        exec();
+        var myArgs = Array.prototype.slice.call(arguments);
+        myArgs.unshift(null);
+
+        exec.apply(this, myArgs);
     });
-};
+}
+
+function doneAfterEvent(evtName, done) {
+
+    $(document).one(evtName, function() {
+
+        done();
+    });
+}
 
 function getTableEntryCount() {
 
@@ -252,6 +358,11 @@ function clickPrevPageButton() {
     $('ul.pagination li').first().find('a').click();
 }
 
+function clickContentSorting() {
+
+    $('th[data-property="content"] span').click();
+}
+
 function resetDatagridAndSortingThen(exec) {
 
     $('#reset-datagrid-and-sorting').click();
@@ -264,10 +375,17 @@ function resetDatagridAndSortingThen(exec) {
 
 function clickContentSortingThen(exec) {
 
-    $(document).one(loadingEventName, function(e) {
+    $(document).one(loadingEventName, function() {
 
-        exec();
+        if ('function' !== typeof exec) {
+            throw new Error('The specified callback isn\'t a function');
+        }
+
+        var myArgs = Array.prototype.slice.call(arguments);
+        myArgs.unshift(null);
+
+        exec.apply(null, myArgs);
     });
 
-    $('th[data-property="content"] span').click();
+    clickContentSorting();
 }

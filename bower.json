@@ -8,7 +8,8 @@
     },
     "devDependencies": {
         "jquery": "*",
-        "font-awesome": "*"
+        "font-awesome": "*",
+        "async": "0.2.5"
     },
     "ignore": [
         "**/.*"

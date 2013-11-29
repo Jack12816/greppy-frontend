@@ -27,19 +27,19 @@ if ('development' == app.get('env')) {
 
 app.get('/', function(req, res) {
 
-    var limit = ('25' === req.query.limit) ? 25 : 10;
+    var limit      = ('25' === req.query.limit) ? 25 : 10;
     var htmlFolder = __dirname + '/../fixtures';
-    var fileToSend;
+    var fileToSend = htmlFolder;
 
     if ('rows' === req.query.render) {
 
-        fileToSend = htmlFolder + '/render/rows/limit' + limit + '/page' + req.query.page + '.html';
+        fileToSend += '/render/rows/limit' + limit + '/page' + req.query.page + '.html';
     } else if ('pagination' === req.query.render) {
 
-        fileToSend = htmlFolder + '/render/pagination/limit' + limit + '/page' + req.query.page + '.html';
+        fileToSend += '/render/pagination/limit' + limit + '/page' + req.query.page + '.html';
     } else {
 
-        fileToSend = htmlFolder + '/data-grid.html';
+        fileToSend += '/data-grid.html';
     }
 
     sendFile(fileToSend, res);

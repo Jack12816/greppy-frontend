@@ -14,7 +14,7 @@ js-dist:
 css-dist:
 	@find less/ -type f | xargs cat > dist/css/greppy.less
 	@./node_modules/.bin/lessc dist/css/greppy.less dist/css/greppy.css
-	@./node_modules/.bin/lessc --compress --yui-compress dist/css/greppy.less dist/css/greppy.min.css
+	@./node_modules/.bin/lessc --clean-css --compress dist/css/greppy.less dist/css/greppy.min.css
 	@rm -f dist/css/greppy.less
 	@sed -i 's/{{version}}/${VERSION}/g' dist/css/greppy.css
 	@sed -i 's/^/\/** Greppy Frontend ${VERSION} *\/ /g' dist/css/greppy.min.css

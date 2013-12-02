@@ -10,54 +10,76 @@ describe('Greppy', function() {
             expect($('table.datagrid').length).to.equal(1);
         });
 
-        it('should reload when clicking the search button', function(done) {
+        describe('rebuilding', function() {
 
-            doneAfterEvent(rebuiltEventName, done);
+            it('should be triggered when clicking the search button',
+                    function(done) {
 
-            $('#search-btn').trigger('click');
-        });
+                doneAfterEvent(rebuiltEventName, done);
 
-        it('should not reload when clicking a currently selected ' +
-                'pagination', function(done) {
+                $('#search-btn').trigger('click');
+            });
 
-            throwOnceOnEvent(rebuiltEventName);
+            it('should be triggered when clicking the first currently ' +
+                    'non-selected pagination item', function(done) {
 
-            $('ul.pagination li.active a').first().click();
+                doneAfterEvent(rebuiltEventName, done);
 
-            setTimeout(function() {
+                $('ul.pagination li:not(.disabled):not(.active)').first()
+                        .find('a').click();
+            });
 
-                $(document).off(rebuiltEventName);
-                done();
-            }, 80);
-        });
+            it('should be triggered when changing the pagination-limit',
+                    function(done) {
 
-        it('should not reload when clicking a currently disabled pagination',
-                function(done) {
+                doneAfterEvent(rebuiltEventName, done);
 
-            throwOnceOnEvent(rebuiltEventName);
+                changePaginationLimitTo(25);
+            });
 
-            $('ul.pagination li.disabled a').first().click();
+            it('should be triggered when clicking on a column title',
+                    function(done) {
 
-            setTimeout(function() {
+                doneAfterEvent(rebuiltEventName, done);
 
-                $(document).off(rebuiltEventName);
-                done();
-            }, 80);
-        });
+                $('th[data-property="title"] span').click();
+            });
 
-        it('should reload when clicking the first currently non-selected ' +
-                'pagination item', function(done) {
+            it('should be triggered when clicking the filter reset button',
+                    function(done) {
 
-            doneAfterEvent(rebuiltEventName, done);
+                doneAfterEvent(rebuiltEventName, done);
 
-            $('ul.pagination li:not(.disabled):not(.active)').first().find('a').click();
-        });
+                $('#search-clear').click();
+            });
 
-        it('should reload when changing the pagination-limit', function(done) {
+            it('should not be triggered when clicking a currently selected ' +
+                    'pagination', function(done) {
 
-            doneAfterEvent(rebuiltEventName, done);
+                throwOnceOnEvent(rebuiltEventName);
 
-            triggerPaginationLimit(25);
+                $('ul.pagination li.active a').first().click();
+
+                setTimeout(function() {
+
+                    $(document).off(rebuiltEventName);
+                    done();
+                }, 80);
+            });
+
+            it('should not be triggered when clicking a currently disabled ' +
+                    'pagination', function(done) {
+
+                throwOnceOnEvent(rebuiltEventName);
+
+                $('ul.pagination li.disabled a').first().click();
+
+                setTimeout(function() {
+
+                    $(document).off(rebuiltEventName);
+                    done();
+                }, 80);
+            });
         });
 
         it('should be able to switch to the next page after changing the ' +
@@ -72,7 +94,7 @@ describe('Greppy', function() {
                 $('ul.pagination li.active').next().find('a').click();
             });
 
-            triggerPaginationLimit(10);
+            changePaginationLimitTo(10);
         });
 
         it('should show the correct amount of entries for the selected ' +
@@ -84,7 +106,7 @@ describe('Greppy', function() {
                 done();
             });
 
-            triggerPaginationLimit(25);
+            changePaginationLimitTo(25);
         });
 
         it('should set the current page to 1 after changing the ' +
@@ -96,7 +118,7 @@ describe('Greppy', function() {
                 done();
             });
 
-            triggerPaginationLimit(10);
+            changePaginationLimitTo(10);
         });
 
         it('should focus the search box when clicking on a column icon',
@@ -108,22 +130,6 @@ describe('Greppy', function() {
             });
 
             $('th[data-property="title"] i.search-trigger').click();
-        });
-
-        it('should rebuild when clicking on a column title',
-                function(done) {
-
-            doneAfterEvent(rebuiltEventName, done);
-
-            $('th[data-property="title"] span').click();
-        });
-
-        it('should rebuild when clicking the filter reset button',
-                function(done) {
-
-            doneAfterEvent(rebuiltEventName, done);
-
-            $('#search-clear').click();
         });
 
         describe('sending correct requests', function() {
@@ -165,9 +171,14 @@ describe('Greppy', function() {
 
                     clickContentSortingThen(function(err, e) {
 
-                        throwIfQueryStringDoesntMatch(e.url, 'render', 'rows');
-                        throwIfQueryStringDoesntMatch(e.url, 'oprop', 'content');
-                        throwIfQueryStringDoesntMatch(e.url, 'order', 'asc');
+                        throwIfQueryStringDoesntMatch(e.url, 'render',
+                                'rows');
+
+                        throwIfQueryStringDoesntMatch(e.url, 'oprop',
+                                'content');
+
+                        throwIfQueryStringDoesntMatch(e.url, 'order',
+                                'asc');
 
                         doneAfterEvent(rebuiltEventName, done);
                     });
@@ -250,11 +261,11 @@ describe('Greppy', function() {
                     doneAfterEvent(rebuiltEventName, done);
                 });
 
-                $('th[data-property="content"] i.search-trigger').click();
+                clickContentSearch();
 
-                $('#search-input').val(searchTerm);
+                enterSearchTerm(searchTerm);
 
-                $('#search-btn').click();
+                clickSearchButton();
             });
         });
     });
@@ -343,7 +354,7 @@ function getActivePageNumber() {
     return parseInt($('ul.pagination li.active a').text(), 10);
 }
 
-function triggerPaginationLimit(limit) {
+function changePaginationLimitTo(limit) {
 
     $('#pagination-limit').val(limit).trigger('change');
 }
@@ -361,6 +372,21 @@ function clickPrevPageButton() {
 function clickContentSorting() {
 
     $('th[data-property="content"] span').click();
+}
+
+function clickContentSearch() {
+
+    $('th[data-property="content"] i.search-trigger').trigger('click');
+}
+
+function clickSearchButton() {
+
+    $('#search-btn').trigger('click');
+}
+
+function enterSearchTerm(searchTerm) {
+
+    $('#search-input').val(searchTerm);
 }
 
 function resetDatagridAndSortingThen(exec) {

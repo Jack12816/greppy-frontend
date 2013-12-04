@@ -1,5 +1,4 @@
 /**
- *
  * This is a small express-powered server used only for testing.
  */
 
@@ -27,7 +26,7 @@ if ('development' == app.get('env')) {
 
 app.get('/', function(req, res) {
 
-    var limit      = ('25' === req.query.limit) ? 25 : 10;
+    var limit      = req.query.limit || 10;
     var htmlFolder = __dirname + '/../fixtures';
     var fileToSend = htmlFolder;
 

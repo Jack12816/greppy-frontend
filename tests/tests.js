@@ -5,9 +5,9 @@ describe('Greppy', function() {
 
     describe('data-grid', function() {
 
-        it('exists', function() {
+        it('exists one time', function() {
 
-            expect($('table.datagrid').length).to.equal(1);
+            expect(isThereOneDatagrid()).to.be.true;
         });
 
         describe('rebuilding', function() {
@@ -17,7 +17,7 @@ describe('Greppy', function() {
 
                 doneAfterEvent(rebuiltEventName, done);
 
-                $('#search-btn').trigger('click');
+                clickSearchButton();
             });
 
             it('should be triggered when clicking the first currently ' +
@@ -25,8 +25,7 @@ describe('Greppy', function() {
 
                 doneAfterEvent(rebuiltEventName, done);
 
-                $('ul.pagination li:not(.disabled):not(.active)').first()
-                        .find('a').click();
+                clickNonSelectedPaginationItem();
             });
 
             it('should be triggered when changing the pagination-limit',
@@ -42,7 +41,7 @@ describe('Greppy', function() {
 
                 doneAfterEvent(rebuiltEventName, done);
 
-                $('th[data-property="title"] span').click();
+                clickTitleSorting();
             });
 
             it('should be triggered when clicking the filter reset button',
@@ -50,7 +49,7 @@ describe('Greppy', function() {
 
                 doneAfterEvent(rebuiltEventName, done);
 
-                $('#search-clear').click();
+                clickFilterResetButton();
             });
 
             it('should not be triggered when clicking a currently selected ' +
@@ -58,11 +57,11 @@ describe('Greppy', function() {
 
                 throwOnceOnEvent(rebuiltEventName);
 
-                $('ul.pagination li.active a').first().click();
+                clickCurrentlySelectedPagination();
 
                 setTimeout(function() {
 
-                    $(document).off(rebuiltEventName);
+                    removeHandler(rebuiltEventName);
                     done();
                 }, 80);
             });
@@ -72,11 +71,11 @@ describe('Greppy', function() {
 
                 throwOnceOnEvent(rebuiltEventName);
 
-                $('ul.pagination li.disabled a').first().click();
+                clickCurrentlyDisabledPagination();
 
                 setTimeout(function() {
 
-                    $(document).off(rebuiltEventName);
+                    removeHandler(rebuiltEventName);
                     done();
                 }, 80);
             });
@@ -91,7 +90,7 @@ describe('Greppy', function() {
                 // handler for rebuilt fired by pagination-button-click
                 doneAfterEvent(rebuiltEventName, done);
 
-                $('ul.pagination li.active').next().find('a').click();
+                clickNextPageInPagination();
             });
 
             changePaginationLimitTo(10);
@@ -124,12 +123,12 @@ describe('Greppy', function() {
         it('should focus the search box when clicking on a column icon',
                 function(done) {
 
-            $(document).one('focus', '#search-input', function() {
+            execOnceOnEventOccuringOn('focus', '#search-input', function(err, e) {
 
                 done();
             });
 
-            $('th[data-property="title"] i.search-trigger').click();
+            clickTitleSearch();
         });
 
         describe('sending correct requests', function() {
@@ -138,7 +137,7 @@ describe('Greppy', function() {
 
                 var nextPage = getActivePageNumber() + 1;
 
-                $(document).one(loadingEventName, function(e) {
+                execOnceOnEvent(loadingEventName, function(err, e) {
 
                     throwIfQueryStringDoesntMatch(e.url, 'render', 'rows');
                     throwIfQueryStringDoesntMatch(e.url, 'page', nextPage);
@@ -153,7 +152,7 @@ describe('Greppy', function() {
 
                 var prevPage = getActivePageNumber() - 1;
 
-                $(document).one(loadingEventName, function(e) {
+                execOnceOnEvent(loadingEventName, function(err, e) {
 
                     throwIfQueryStringDoesntMatch(e.url, 'render', 'rows');
                     throwIfQueryStringDoesntMatch(e.url, 'page', prevPage);
@@ -267,6 +266,24 @@ describe('Greppy', function() {
 
                 clickSearchButton();
             });
+
+            it.skip('should work for a pagination-limit change to 10, 25, 50 and ' +
+                    '100', function(done) {
+
+                /**
+                 * TODO: different events for row- and pagination requests,
+                 * so we don't have to wait for the event occuring a second
+                 * time just to get the pagination request
+                 */
+                execOnceOnEventForSecondTime(loadingEventName,
+                        function(err, e) {
+
+                    console.log(e.url);
+                    done();
+                });
+
+                changePaginationLimitTo(25);
+            });
         });
     });
 });
@@ -329,11 +346,51 @@ function execOnceOnEvent(evtName, exec) {
 
     $(document).one(evtName, function() {
 
-        var myArgs = Array.prototype.slice.call(arguments);
-        myArgs.unshift(null);
+        var myArgs = getArgsUnshiftedWithNull(arguments);
 
         exec.apply(this, myArgs);
     });
+}
+
+/**
+ * TODO: make this function unnecessary through event changes. see the test
+ * where it's used for details.
+ */
+function execOnceOnEventForSecondTime(evtName, exec) {
+
+    var timesOccured = 0;
+
+    $(document).on(evtName, function() {
+
+        timesOccured++;
+
+        if (2 === timesOccured) {
+
+            removeHandler(evtName);
+
+            var myArgs = getArgsUnshiftedWithNull(arguments);
+
+            exec.apply(this, myArgs);
+        }
+    });
+}
+
+function execOnceOnEventOccuringOn(evtName, occuringOnSel, exec) {
+
+    $(document).one(evtName, occuringOnSel, function() {
+
+        var myArgs = getArgsUnshiftedWithNull(arguments);
+
+        exec.apply(this, myArgs);
+    });
+}
+
+function getArgsUnshiftedWithNull(args) {
+
+    args = Array.prototype.slice.call(args);
+    args.unshift(null);
+
+    return args;
 }
 
 function doneAfterEvent(evtName, done) {
@@ -342,6 +399,16 @@ function doneAfterEvent(evtName, done) {
 
         done();
     });
+}
+
+function removeHandler(evtName) {
+
+    $(document).off(evtName);
+}
+
+function isThereOneDatagrid() {
+
+    return $('table.datagrid').length === 1;
 }
 
 function getTableEntryCount() {
@@ -361,17 +428,47 @@ function changePaginationLimitTo(limit) {
 
 function clickNextPageButton() {
 
-    $('ul.pagination li').last().find('a').click();
+    $('ul.pagination li').last().find('a').trigger('click');
 }
 
 function clickPrevPageButton() {
 
-    $('ul.pagination li').first().find('a').click();
+    $('ul.pagination li').first().find('a').trigger('click');
+}
+
+function clickNextPageInPagination() {
+
+    $('ul.pagination li.active').next().find('a').trigger('click');
+}
+
+function clickNonSelectedPaginationItem() {
+
+    $('ul.pagination li:not(.disabled):not(.active)').first().find('a').click();
+}
+
+function clickCurrentlySelectedPagination() {
+
+    $('ul.pagination li.active a').first().trigger('click');
+}
+
+function clickCurrentlyDisabledPagination() {
+
+    $('ul.pagination li.disabled a').first().trigger('click');
+}
+
+function clickTitleSorting() {
+
+    $('th[data-property="title"] span').trigger('click');
 }
 
 function clickContentSorting() {
 
-    $('th[data-property="content"] span').click();
+    $('th[data-property="content"] span').trigger('click');
+}
+
+function clickTitleSearch() {
+
+    $('th[data-property="title"] i.search-trigger').trigger('click');
 }
 
 function clickContentSearch() {
@@ -384,6 +481,11 @@ function clickSearchButton() {
     $('#search-btn').trigger('click');
 }
 
+function clickFilterResetButton() {
+
+    $('#search-clear').click();
+}
+
 function enterSearchTerm(searchTerm) {
 
     $('#search-input').val(searchTerm);
@@ -391,7 +493,7 @@ function enterSearchTerm(searchTerm) {
 
 function resetDatagridAndSortingThen(exec) {
 
-    $('#reset-datagrid-and-sorting').click();
+    $('#reset-datagrid-and-sorting').trigger('click');
 
     execOnceOnEvent(rebuiltEventName, function() {
 

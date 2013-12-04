@@ -63,8 +63,8 @@ greppy.DataGrid.Search = function(datagrid, datagridElement)
 /**
  * Apply the search box settings.
  *
- * @params {String} property - Name of the property to search for
- * @params {String} placeholder - Placeholder of the search box
+ * @param {String} property - Name of the property to search for
+ * @param {String} placeholder - Placeholder of the search box
  */
 greppy.DataGrid.Search.prototype.settings = function(property, placeholder)
 {

@@ -6,7 +6,10 @@ an complete data grid implementation with searching, sorting
 and pagination based on AJAX, and many bindings to the Greppy
 framework.
 
-For more details take a look at [greppy.org](http://greppy.org)
+For more details take a look at [greppy.org](http://greppy.org) or the
+[Greppy API](http://greppy.org/docs). If you got any problems, a wish to
+contribute or to discuss new features take a look at our #greppy IRC channel on
+freenode.
 
 [![Gittip](http://img.shields.io/gittip/Jack12816.png)](https://www.gittip.com/Jack12816/)
 [![npm Downloads](http://img.shields.io/npm/dm/greppy-frontend.svg)](https://www.npmjs.org/package/greppy-frontend)

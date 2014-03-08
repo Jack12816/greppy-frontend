@@ -1,4 +1,4 @@
-# Greppy Frontend Library
+[![Greppy Frontend logo](http://greppy.org/img/greppy-frontend-teaser.png)](http://greppy.org/)
 
 The Greppy frontend library is an UI extension to the Twitter
 Bootstrap. It provides classes for simple handling of modals,
@@ -7,6 +7,10 @@ and pagination based on AJAX, and many bindings to the Greppy
 framework.
 
 For more details take a look at [greppy.org](http://greppy.org)
+
+[![Gittip](http://img.shields.io/gittip/Jack12816.png)](https://www.gittip.com/Jack12816/)
+[![npm Downloads](http://img.shields.io/npm/dm/greppy-frontend.svg)](https://www.npmjs.org/package/greppy-frontend)
+[![npm Version](http://img.shields.io/npm/v/greppy-frontend.svg)](https://www.npmjs.org/package/greppy-frontend)
 
 ## Installation
 

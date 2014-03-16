@@ -1,10 +1,8 @@
 [![Greppy Frontend logo](http://greppy.org/img/greppy-frontend-teaser.png)](http://greppy.org/)
 
-The Greppy frontend library is an UI extension to the Twitter
-Bootstrap. It provides classes for simple handling of modals,
-an complete data grid implementation with searching, sorting
-and pagination based on AJAX, and many bindings to the Greppy
-framework.
+The Greppy frontend library extends Bootstrap. It provides classes for simple
+handling of modals, a complete data grid implementation with AJAX-based search,
+sorting and pagination. It also includes many bindings to the Greppy Framework.
 
 For more details take a look at [greppy.org](http://greppy.org) or the
 [Greppy API](http://docs.greppy.org/). If you got any problems, a wish to

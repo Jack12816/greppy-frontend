@@ -1,1 +1,19 @@
-/** Greppy Frontend 0.9.1 */ .table th,.table td{vertical-align:middle!important}.no-wrap{white-space:nowrap}.min{width:1px;white-space:nowrap}.small-gutter{padding-right:0;padding-left:8px}.page-headline .input-group-btn>.btn+.btn{margin-left:-8px!important}.bottom-border{padding-bottom:10px;border-bottom:1px solid #ddd}.datagrid th,.pointer{cursor:pointer!important}.datagrid th{white-space:nowrap}.search-trigger:hover{color:#428bca}.small-bottom-margin{margin:0 0 5px}.medium-left-margin{margin-left:10px}.greppy-container-num .btn{margin-left:-1px}.greppy-container-num .btn+.btn{margin-left:-5px}.greppy-overlay{z-index:10;background:none repeat scroll 0 0 rgba(255,255,255,.6);position:absolute}.greppy-validator-invalid{color:#e9322d}.greppy-validator-invalid.form-control{border-color:#e9322d;-moz-box-shadow:0 0 6px #f8b9b7;-webkit-box-shadow:0 0 6px #f8b9b7;box-shadow:0 0 6px #f8b9b7}.greppy-validator-invalid.btn-group{-moz-box-shadow:0 0 6px #f8b9b7;-webkit-box-shadow:0 0 6px #f8b9b7;box-shadow:0 0 6px #f8b9b7}.greppy-validator-invalid.btn-group .btn{color:#e9322d;border-color:#e9322d}.greppy-validator-invalid.input-group{-moz-box-shadow:0 0 6px #f8b9b7;-webkit-box-shadow:0 0 6px #f8b9b7;box-shadow:0 0 6px #f8b9b7}.greppy-validator-invalid.input-group .input-group-addon,.greppy-validator-invalid.input-group .form-control,.greppy-validator-invalid.input-group .input-group-btn .btn{color:#e9322d;border-color:#e9322d}.greppy-validator-invalid.greppy-container-num .input-group-btn .btn{color:#e9322d;border-color:#e9322d}.greppy-validator-msg{position:absolute;z-index:5}
+/** Greppy Frontend 0.10.0 */ .table th,.table td{vertical-align:middle !important}
+/** Greppy Frontend 0.10.0 */ .no-wrap{white-space:nowrap}
+/** Greppy Frontend 0.10.0 */ .min{width:1px;white-space:nowrap}
+/** Greppy Frontend 0.10.0 */ .small-gutter{padding-right:0;padding-left:8px}
+/** Greppy Frontend 0.10.0 */ .page-headline .input-group-btn>.btn+.btn{margin-left:-8px !important}
+/** Greppy Frontend 0.10.0 */ .bottom-border{padding-bottom:10px;border-bottom:1px solid #ddd}
+/** Greppy Frontend 0.10.0 */ .datagrid th,.pointer{cursor:pointer !important}
+/** Greppy Frontend 0.10.0 */ .datagrid th{white-space:nowrap}
+/** Greppy Frontend 0.10.0 */ .search-trigger:hover{color:#428bca}
+/** Greppy Frontend 0.10.0 */ .small-bottom-margin{margin:0 0 5px 0}
+/** Greppy Frontend 0.10.0 */ .medium-left-margin{margin-left:10px}
+/** Greppy Frontend 0.10.0 */ .greppy-container-num .btn{margin-left:-1px}
+/** Greppy Frontend 0.10.0 */ .greppy-container-num .btn+.btn{margin-left:-5px}
+/** Greppy Frontend 0.10.0 */ .greppy-overlay{z-index:10;background:none repeat scroll 0 0 rgba(255,255,255,0.6);position:absolute}
+/** Greppy Frontend 0.10.0 */ .greppy-validator-invalid{color:#e9322d}.greppy-validator-invalid.form-control{border-color:#e9322d;-moz-box-shadow:0 0 6px #f8b9b7;-webkit-box-shadow:0 0 6px #f8b9b7;box-shadow:0 0 6px #f8b9b7}
+/** Greppy Frontend 0.10.0 */ .greppy-validator-invalid.btn-group{-moz-box-shadow:0 0 6px #f8b9b7;-webkit-box-shadow:0 0 6px #f8b9b7;box-shadow:0 0 6px #f8b9b7}.greppy-validator-invalid.btn-group .btn{color:#e9322d;border-color:#e9322d}
+/** Greppy Frontend 0.10.0 */ .greppy-validator-invalid.input-group{-moz-box-shadow:0 0 6px #f8b9b7;-webkit-box-shadow:0 0 6px #f8b9b7;box-shadow:0 0 6px #f8b9b7}.greppy-validator-invalid.input-group .input-group-addon,.greppy-validator-invalid.input-group .form-control,.greppy-validator-invalid.input-group .input-group-btn .btn{color:#e9322d;border-color:#e9322d}
+/** Greppy Frontend 0.10.0 */ .greppy-validator-invalid.greppy-container-num .input-group-btn .btn{color:#e9322d;border-color:#e9322d}
+/** Greppy Frontend 0.10.0 */ .greppy-validator-msg{position:absolute;z-index:5}

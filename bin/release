@@ -14,7 +14,11 @@ fi
 
 function git-changelog()
 {
-    git log --pretty=format:"* %h %B" ${1}..HEAD | sort -k 3
+    git log --pretty=format:"* [%h](https://github.com/Jack12816/greppy-frontend/commit/%h) %B" \
+        ${1}..HEAD \
+        | sort -k 3 \
+        | sed 's/) \[/) **[/g' \
+        | sed 's/\] /]** /g'
 }
 
 function updateDeps()

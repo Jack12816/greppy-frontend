@@ -1,3 +1,8 @@
+# Version 0.11.0
+
+* [cf6946a](https://github.com/Jack12816/greppy-frontend/commit/cf6946a) **[Docs]** Added CHANGELOG.md.
+* [43108b0](https://github.com/Jack12816/greppy-frontend/commit/43108b0) **[Makefile][Build-System]** Rewritten makefile. Switched from Ruby Guard to Grunt.
+
 # Version 0.10.0
 
 * [f4a20e4](https://github.com/Jack12816/greppy-frontend/commit/f4a20e4) **[Application]** Extended app.dialog() method to be more optional.

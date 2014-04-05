@@ -1,0 +1,137 @@
+#!/bin/bash
+#
+# @author Hermann Mayer <hermann.mayer92@gmail.com>
+
+# Get the full path of the current file, no matter where it being called from
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Go in this path and change to the app directory
+cd "${DIR}" && cd ../
+
+if [ -z "${NODE_BIN}" ]; then
+    NODE_BIN=`which node`
+fi
+
+function git-changelog()
+{
+    git log --pretty=format:"* %h %B" ${1}..HEAD | sort -k 3
+}
+
+function updateDeps()
+{
+    make build
+}
+
+function readCurrentVersion()
+{
+    ${NODE_BIN} <<EON
+    var package = require('./package.json');
+    console.log(package.version);
+EON
+    return $?
+}
+
+function writeNexVersion()
+{
+    ${NODE_BIN} <<EON
+    var package = require('./$1');
+    package.version = "$2";
+    console.log(JSON.stringify(package, null, 2));
+EON
+}
+
+function git-tag-release()
+{
+    git add .
+    git commit -am "[Release] Bumped version to $1."
+    git tag "$1"
+}
+
+function nextMajorVersion()
+{
+    local MAJOR="`echo $1 | cut -d'.' -f1`"
+    local MINOR="`echo $1 | cut -d'.' -f2`"
+    local BUGFIX="`echo $1 | cut -d'.' -f3`"
+    echo $(($MAJOR + 1)).0.0
+}
+
+function nextMinorVersion()
+{
+    local MAJOR="`echo $1 | cut -d'.' -f1`"
+    local MINOR="`echo $1 | cut -d'.' -f2`"
+    local BUGFIX="`echo $1 | cut -d'.' -f3`"
+    echo $MAJOR.$(($MINOR + 1)).0
+}
+
+function nextBugfixVersion()
+{
+    local MAJOR="`echo $1 | cut -d'.' -f1`"
+    local MINOR="`echo $1 | cut -d'.' -f2`"
+    local BUGFIX="`echo $1 | cut -d'.' -f3`"
+    echo $MAJOR.$MINOR.$(($BUGFIX + 1))
+}
+
+NEXT_VERSION_FILE="/tmp/.greppy-frontend-next-version"
+CHANGELOG="/tmp/.greppy-frontend-next-changelog-chapter"
+VERSION=$(readCurrentVersion)
+
+dialog --radiolist "Current Greppy Frontend version is ${VERSION}" 0 90 3 \
+    "$(nextMajorVersion $VERSION)" "Next major version" off \
+    "$(nextMinorVersion $VERSION)" "Next minor version" off \
+    "$(nextBugfixVersion $VERSION)" "Next bugfix version" on 2> ${NEXT_VERSION_FILE}
+
+NEXT_VERSION=$(cat ${NEXT_VERSION_FILE})
+
+echo $NEXT_VERSION
+
+dialog --yesno "Next version should be ${NEXT_VERSION}?" 5 60
+
+if [ 0 -ne $? ]; then
+    exit;
+fi
+
+# Build the changelog
+HEADLINE="# Version ${NEXT_VERSION}"
+# SEP=""
+
+# for i in $(seq ${#HEADLINE}); do
+#     SEP="${SEP}="
+# done
+
+echo $HEADLINE > ${CHANGELOG}
+# echo $SEP >> ${CHANGELOG}
+echo >> $CHANGELOG
+git-changelog "$VERSION" | while read line; do
+    if [ -n "$line" ]; then
+        echo "${line}" >> $CHANGELOG
+    fi
+done
+echo >> $CHANGELOG
+
+CHANGELOG_LINES=$(wc -l $CHANGELOG | cut -d' ' -f1)
+dialog --title " Changelog " \
+    --yesno "$(cat $CHANGELOG)" $(($CHANGELOG_LINES + 3)) $(($COLUMNS - 4))
+
+if [ 0 -ne $? ]; then
+    exit;
+fi
+
+cat CHANGELOG.md >> $CHANGELOG
+
+dialog --yesno "We are ready to write the version $NEXT_VERSION. Process?" 5 60
+
+if [ 0 -ne $? ]; then
+    exit;
+fi
+
+# Write the version
+cp $CHANGELOG CHANGELOG.md
+writeNexVersion "package.json" "$NEXT_VERSION" > package.json.new
+mv package.json.new package.json
+writeNexVersion "bower.json" "$NEXT_VERSION" > bower.json.new
+mv bower.json.new bower.json
+updateDeps
+git-tag-release "$NEXT_VERSION"
+
+dialog --msgbox "$NEXT_VERSION was written.\n\n* Extended the changelog\n* Written new version to the manifest\n* Created new git tag" 10 60
+

@@ -29,5 +29,5 @@ their full versions. To setup the environment just run:
 
 To build the minified versions simply run:
 
-    $ make dist
+    $ make build
 

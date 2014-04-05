@@ -1,47 +1,52 @@
 {
-    "name": "greppy-frontend",
-    "description": "Frontend library for the easy and lightweight application framework",
-    "version": "0.10.0",
-    "private": false,
-    "author": "Hermann Mayer <hermann.mayer92@googlemail.com> (http://hermann-mayer.net/)",
-    "license": "LGPL-3.0",
-    "contributors": [
-        {
-            "name": "Hermann Mayer",
-            "email": "hermann.mayer92@gmail.com",
-            "web": "hermann-mayer.net"
-        },
-        {
-            "name": "Patrick Jaksch",
-            "email": "patrick@jaksch.biz"
-        },
-        {
-            "name": "Lars Dietrich",
-            "email": "lars@dietrich-hosting.de"
-        },
-        {
-            "name": "Ralf Grawunder",
-            "email": "r.grawunder@gmail.com",
-            "web": "black-magic-voodoo-stuff.net"
-        },
-        {
-            "name": "Nabil Krause",
-            "email": "nabil.krause@silberlicht.eu"
-        }
-    ],
-    "devDependencies": {
-        "uglify-js": "~2.4.6",
-        "less": "~1.5.1"
+  "name": "greppy-frontend",
+  "description": "Frontend library for the easy and lightweight application framework",
+  "version": "0.10.0",
+  "private": false,
+  "author": "Hermann Mayer <hermann.mayer92@googlemail.com> (http://hermann-mayer.net/)",
+  "license": "LGPL-3.0",
+  "contributors": [
+    {
+      "name": "Hermann Mayer",
+      "email": "hermann.mayer92@gmail.com",
+      "web": "hermann-mayer.net"
     },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/Jack12816/greppy-frontend"
+    {
+      "name": "Patrick Jaksch",
+      "email": "patrick@jaksch.biz"
     },
-    "keywords": [
-        "greppy",
-        "frontend"
-    ],
-    "bugs": {
-        "url": "https://github.com/Jack12816/greppy-frontend/issues"
+    {
+      "name": "Lars Dietrich",
+      "email": "lars@dietrich-hosting.de"
+    },
+    {
+      "name": "Ralf Grawunder",
+      "email": "r.grawunder@gmail.com",
+      "web": "black-magic-voodoo-stuff.net"
+    },
+    {
+      "name": "Nabil Krause",
+      "email": "nabil.krause@silberlicht.eu"
     }
+  ],
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-cli": "~0.1.13",
+    "grunt-contrib-uglify": "~0.4.0",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-contrib-less": "~0.11.0",
+    "grunt-contrib-concat": "~0.4.0",
+    "grunt-banner": "~0.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Jack12816/greppy-frontend"
+  },
+  "keywords": [
+    "greppy",
+    "frontend"
+  ],
+  "bugs": {
+    "url": "https://github.com/Jack12816/greppy-frontend/issues"
+  }
 }

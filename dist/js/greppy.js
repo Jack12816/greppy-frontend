@@ -1,7 +1,7 @@
 /*!
  * @name greppy-frontend
- * @date 2014-04-05 23:10
- * @version 0.11.0
+ * @date 2014-08-12 14:07
+ * @version 0.11.1
  */
 /**
  * Greppy Frontend Basis Class
@@ -23,17 +23,12 @@ greppy.Application = function() {}, /**
 greppy.Application.prototype.dialog = function(a, b, c) {
     b = b || {}, b.header = b.header || "Confirmation required", b.keyboard = "undefined" == typeof b.keyboard ? !0 : b.keyboard, 
     b.show = "undefined" == typeof b.show ? !0 : b.show, b.closeBtn = "undefined" == typeof b.closeBtn ? !0 : b.closeBtn, 
-    b.template = b.template || '<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header">' + (!1 === b.closeBtn ? "" : '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>') + '{{header}}</div><div class="modal-body"></div><div class="modal-footer"></div></div></div></div>', 
+    b.template = b.template || '<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header">' + (!1 === b.closeBtn ? "" : '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>') + "{{header}}" + "</div>" + '<div class="modal-body">' + "</div>" + '<div class="modal-footer">' + "</div></div></div></div>", 
     b.template = b.template.replace("{{header}}", '<h4 class="modal-title">' + b.header + "</h4>");
     var d = $(b.template);
     // Inject the body
-    // Default buttons
-    // Build buttons and bind events
-    // Add modal partial to the body
-    // Setup the Bootstrap modal
-    // Bind on-hide event
-    // Bind on-show event
-    return d.find(".modal-body").html(a), c = c || [ {
+    return d.find(".modal-body").html(a), // Default buttons
+    c = c || [ {
         label: "Cancel",
         "class": "btn btn-default",
         icon: "fa-times",
@@ -47,21 +42,26 @@ greppy.Application.prototype.dialog = function(a, b, c) {
         callback: b.ok || function(a) {
             a();
         }
-    } ], c.forEach(function(a) {
-        var b = $('<a href="#" class="' + a.class + '"><i class="fa ' + a.icon + '"></i> ' + a.label + "</a>");
+    } ], // Build buttons and bind events
+    c.forEach(function(a) {
+        var b = $('<a href="#" class="' + a.class + '">' + '<i class="fa ' + a.icon + '"></i> ' + a.label + "</a>");
         // Bind callbacks
         b.click(function() {
             return a.callback(function() {
                 d.modal("hide");
             }), !1;
         }), d.find(".modal-footer").append(b);
-    }), $("body").append(d), console.log(b), d.modal(b), d.on("hidden.bs.modal", function() {
+    }), // Add modal partial to the body
+    $("body").append(d), console.log(b), // Setup the Bootstrap modal
+    d.modal(b), // Bind on-hide event
+    d.on("hidden.bs.modal", function() {
         // Bind close btn if necessary
         // Bind close btn if necessary
         return "function" == typeof b.close ? b.close(function() {
             d.remove();
-        }) : void d.remove();
-    }), d.on("shown.bs.modal", function() {
+        }) : (d.remove(), void 0);
+    }), // Bind on-show event
+    d.on("shown.bs.modal", function() {
         d.find("input:first").focus();
     }), d;
 }, /**
@@ -166,8 +166,9 @@ greppy.Validator.prototype.bindAllEventsToValidator = function(a) {
  * @param {Object} el The element to validate.
  */
 greppy.Validator.prototype.validate = function(a) {
-    return !1 === a.checkValidity() ? void this.markInvalid(this.getMark(a)) : (this.removeInvalidMark(this.getMark(a)), 
-    void this.removeMsg(this.getMark(a)));
+    return !1 === a.checkValidity() ? (this.markInvalid(this.getMark(a)), //this.showMsg(el);
+    void 0) : (this.removeInvalidMark(this.getMark(a)), this.removeMsg(this.getMark(a)), 
+    void 0);
 }, /**
  * Marks the provided element as invalid.
  *
@@ -213,9 +214,9 @@ greppy.Validator.prototype.hasActiveMsg = function(a) {
  * @param {Boolean} fast No fading out; fast removing.
  */
 greppy.Validator.prototype.removeMsg = function(a, b) {
-    return a = $(a).nextAll(".greppy-validator-msg"), b ? void a.remove() : void a.fadeOut(function() {
+    return a = $(a).nextAll(".greppy-validator-msg"), b ? (a.remove(), void 0) : (a.fadeOut(function() {
         a.remove();
-    });
+    }), void 0);
 }, /**
  * @constructor
  *
@@ -259,8 +260,7 @@ greppy.DataGrid.prototype.buildUrl = function(a) {
  * @param {Function} callback - Function to call on finish
  */
 greppy.DataGrid.prototype.loadAndRebuild = function(a, b) {
-    this.table.trigger("gDatagridLoading");
-    a = a || [];
+    this.table.trigger("gDatagridLoading"), a = a || [];
     var c = function(a) {
         $.ajax({
             type: "GET",
@@ -423,7 +423,7 @@ greppy.DataGrid.Search.prototype.getParameters = function() {
     if ("" == this.input.val()) return a;
     var a = a.concat([ {
         name: "search",
-        value: this.input.val()
+        value: this.input.val().trim()
     }, {
         name: "sprop",
         value: this.input.attr("data-property")
@@ -462,7 +462,7 @@ greppy.DataGrid.Sort.prototype.toggle = function(a) {
     return b || (a.append($('<i class="direction text-muted fa fa-arrow-down"></i>')), 
     a.attr("data-sort", "asc")), "asc" === b && (a.find(".direction").removeClass("fa-arrow-down").addClass("fa-arrow-up"), 
     a.attr("data-sort", "desc")), "desc" === b && (a.find(".direction").remove(), a.attr("data-sort", "")), 
-    a.attr("data-sort") ? void this.datagrid.load() : this.datagrid.reset();
+    a.attr("data-sort") ? (this.datagrid.load(), void 0) : this.datagrid.reset();
 }, /**
  * Get all relevant parameters.
  *
@@ -667,7 +667,7 @@ greppy.Styler.Upload.prototype.addStyles = function(a) {
  * @returns {String} The markup as HTML
  */
 greppy.Styler.Upload.prototype.getMarkup = function(a) {
-    return '<div class="input-group" data-fileuploadname="' + a.attr("name") + '" data-greppy-validator-mark="' + a.attr("name") + '"><span class="input-group-addon"><i class="fa fa-file"></i></span><div class="form-control"><span class="file-path"></span></div><span class="input-group-btn"><button class="btn btn-default" type="button">Datei wählen</button></span></div>';
+    return '<div class="input-group" data-fileuploadname="' + a.attr("name") + '"' + ' data-greppy-validator-mark="' + a.attr("name") + '">' + '<span class="input-group-addon"><i class="fa fa-file"></i></span>' + '<div class="form-control"><span class="file-path"></span></div>' + '<span class="input-group-btn">' + '<button class="btn btn-default" type="button">Datei wählen</button>' + "</span>" + "</div>";
 }, /**
  * Shows the filename of the current selected file in the specified element.
  *

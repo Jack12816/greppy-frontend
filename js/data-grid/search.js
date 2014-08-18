@@ -99,8 +99,10 @@ greppy.DataGrid.Search.prototype.getParameters = function()
         return params;
     }
 
+    var search = this.input.val();
+
     var params = params.concat([
-        {name: 'search', value: this.input.val().trim()},
+        {name: 'search', value: search ? search.trim() : null},
         {name: 'sprop', value: this.input.attr('data-property')}
     ]);
 

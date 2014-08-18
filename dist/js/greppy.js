@@ -1,6 +1,6 @@
 /*!
  * @name greppy-frontend
- * @date 2014-08-12 14:07
+ * @date 2014-08-18 11:11
  * @version 0.11.1
  */
 /**
@@ -421,9 +421,9 @@ greppy.DataGrid.Search.prototype.clear = function() {
 greppy.DataGrid.Search.prototype.getParameters = function() {
     var a = [];
     if ("" == this.input.val()) return a;
-    var a = a.concat([ {
+    var b = this.input.val(), a = a.concat([ {
         name: "search",
-        value: this.input.val().trim()
+        value: b ? b.trim() : null
     }, {
         name: "sprop",
         value: this.input.attr("data-property")

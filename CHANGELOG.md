@@ -1,3 +1,7 @@
+# Version 0.11.2
+
+* [e0ab3c7](https://github.com/Jack12816/greppy-frontend/commit/e0ab3c7) **[Bugfix][Data-Grid][Search]** Always trim the search input value if available.
+
 # Version 0.11.1
 
 * [fc36c4b](https://github.com/Jack12816/greppy-frontend/commit/fc36c4b) **[Bugfix][Data-Grid][Search]** Always trim the search input value.

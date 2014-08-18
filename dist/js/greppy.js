@@ -1,7 +1,7 @@
 /*!
  * @name greppy-frontend
- * @date 2014-08-18 11:11
- * @version 0.11.1
+ * @date 2014-08-18 11:12
+ * @version 0.11.2
  */
 /**
  * Greppy Frontend Basis Class
